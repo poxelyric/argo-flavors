@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ .Values.applicationset.name }}
+  namespace: {{ .Values.applicationset.namespace }}
+spec:
+  generators:
+{{ toYaml .Values.applicationset.generators | indent 4 }}
+  template:
+    metadata:
+      name: {{ .Values.applicationset.template.metadata.name }}
+    spec:
+{{ toYaml .Values.applicationset.template.spec | indent 6 }}

@@ -1,0 +1,29 @@
+# Default values for serviceset chart
+applicationset:
+  name: services-applicationset
+  namespace: argocd
+
+defaults:
+  spec:
+    project: default
+    source:
+      repoURL: https://github.com/example/services-repo
+      targetRevision: HEAD
+      path: .
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: default
+
+apps:
+  service1:
+    spec:
+      source:
+        path: service1
+      destination:
+        namespace: service1
+  service2:
+    spec:
+      source:
+        path: service2
+      destination:
+        namespace: service2

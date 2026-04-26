@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ .Values.applicationset.name }}
+  namespace: {{ .Values.applicationset.namespace }}
+spec:
+  generators:
+  - list:
+      elements:
+{{- range $appName, $app := .Values.apps }}
+      - name: {{ $appName }}
+        spec: {{ merge $.Values.defaults.spec $app.spec | toYaml | indent 10 }}
+{{- end }}
+  template:
+    metadata:
+      name: '{{name}}-app'
+    spec:
+      project: '{{.spec.project}}'
+      source:
+        repoURL: '{{.spec.source.repoURL}}'
+        targetRevision: '{{.spec.source.targetRevision}}'
+        path: '{{.spec.source.path}}'
+      destination:
+        server: '{{.spec.destination.server}}'
+        namespace: '{{.spec.destination.namespace}}'
