@@ -5,9 +5,19 @@ metadata:
   namespace: {{ .Values.applicationset.namespace }}
 spec:
   generators:
-{{ toYaml .Values.applicationset.generators | indent 4 }}
+  - git:
+      repoURL: {{ .Values.applicationset.definitionsRepo.repoURL | quote }}
+      revision: {{ .Values.applicationset.definitionsRepo.targetRevision | quote }}
+      files:
+      - path: "{{ .Values.applicationset.definitionsRepo.basePath }}/**/{{ .Values.env }}/[^_]*.yaml"
   template:
     metadata:
-      name: {{ .Values.applicationset.template.metadata.name }}
+      name: '{{`{{path.basename}}`}}-cluster'
     spec:
-{{ toYaml .Values.applicationset.template.spec | indent 6 }}
+      project: default
+      source:
+        repoURL: https://machine    #TODO: Update this to the actual repo URL where the deployment charts is stored
+        targetRevision: HEAD #TODO: Edit from values.yaml
+        path: serviceset
+      destination:
+        server: https://kubernetes.default.svc
