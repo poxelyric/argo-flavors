@@ -1,0 +1,61 @@
+{{/*
+This part places .Values.hubApps in a variable so that we can modify it.
+Merging with dict to change dataType for allowing removal of apps by setting an app value to null in additional value file.
+*/}}
+{{- $modified_hubApps := merge dict .Values.hubApps -}}
+
+{{- range .Values.hubAppModifiers -}}
+{{/*
+Here we add a key "hubApps" with value of what is stored in $modified_hubApps to the args dict.
+If .args is not defined an empty dict is used instead because of the default function.
+*/}}
+{{- $input := set (default dict .args) "hubApps" $modified_hubApps -}}
+
+{{/*
+Include is used to include a helpers.tpl template with $input provided as context.
+The template doesn't output any text but it modifies $input.hubApps which means modifying $modified_hubApps
+*/}}
+{{- include .function $input -}}
+{{- end -}}
+
+{{/* Here we include our definition for the base source. There are default values we want to give sources and overwrites we want to enforce.
+The difference is in the precedence they have over user input */}}
+{{- $baseSourceOverwrite := include "baseSource.Overwrite" . | fromYaml }}
+{{- $baseSourceDefaults := include "baseSource.defaults" . | fromYaml }}
+
+{{/* Here the modified hubApps are iterated and every modified hubApp definition is used as context to template an app resource. */}}
+{{- range $name, $hubApp := $modified_hubApps }}
+
+{{/*
+Here we iterate over the sources to add the basic overwrite to all of them based on different priorities.
+*/}}
+{{- if hasKey $hubApp "sources"}}
+  {{- range $hubApp.sources }}
+    {{- $_ := merge . $baseSourceDefaults -}}
+    {{- $_ := mergeOverwrite . $baseSourceOverwrite -}}
+  {{- end }}
+{{- else }}
+  {{- $_ := merge $hubApp.source $baseSourceDefaults -}}
+  {{- $_ := mergeOverwrite $hubApp.source $baseSourceOverwrite -}}
+{{- end }}
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $name }}-{{ $.Values.global.clusterName }}
+  namespace: {{ $.Values.global.argocdConfig.hub_ns }}
+spec:
+  project: {{ $.Values.global.argocdConfig.edge_project }}
+  destination:
+    server: 'https://api.{{ $.Values.global.clusterName }}.{{ $.Values.global.baseDomain }}:6443'
+  {{- /* Paste custom syncPolicy. If not defined, defaults to null (manual sync) */}}
+  {{- if hasKey $hubApp "syncPolicy" }}
+  syncPolicy:
+    {{- tpl (toYaml $hubApp.syncPolicy) $ | nindent 4 }}
+  {{- else }}
+  {{- include "syncPolicy.default" $ | nindent 2 }}
+  {{- end }}
+  {{- /* Paste the rest of the app definition */}}
+  {{- tpl (omit $hubApp "syncPolicy" | toYaml) $ | nindent 2 }}
+---
+{{- end }}
