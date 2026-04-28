@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cloudletset-{{ .Values.global.env }}
+  namespace: {{ .Values.global.argocdConfig.hub_ns }}
+spec:
+  goTemplate: true
+  generators:
+    - git:
+        repoURL: {{ .Values.global.definitionsRepo.url }}
+        revision: {{ .Values.global.definitionsRepo.revision }}
+        files:
+          - path: '{{ .Values.global.flavorsMonorepo.basePath }}/**/{{ .Values.global.env }}/[^.]*'
+  template:
+    metadata:
+      name: '{{ include "git-generator.clusterName" . }}-hub-apps'
+      namespace: {{ .Values.global.argocdConfig.hub_ns }}
+    spec:
+      {{ if .Values.global.autoSync }}
+      syncPolicy:
+        automated: {}
+      {{ end }}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Values.global.argocdConfig.hub_ns }}
+        project: {{ .Values.global.argocdConfig.hub_project }}
+  templatePatch: |-
+    {{- include "git-generator.defineVars" . | nindent 4 }}
+    spec:
+      sources:
+        - repoURL: {{ .Values.global.definitionsRepo.url }}
+          targetRevision: {{ .Values.global.definitionsRepo.revision }}
+          ref: definitions
+        {{'{{-'}} if and (has $flavor $flavorsWithoutInventoryVars | not) (eq $env "virtual" | not) }}'{{'}}'}}
+        - repoURL: {{ .Values.global.inventoryRepo.url }}
+          targetRevision: {{ .Values.global.inventoryRepo.revision }}
+          ref: inventories
+        {{'{{-'}} end }}'{{'}}'}}
+        - repoURL: {{ .Values.global.flavorsMonorepo.url }}
+          targetRevision: {{ .Values.global.flavorsMonorepo.revision }}
+          helm:
+            valueFiles:
+              {{'{{-'}} if and (has $flavor $flavorsWithoutInventoryVars | not) (eq $env "virtual" | not) }}'{{'}}'}}
+              - $inventories/{{ .Values.global.inventoryRepo.basePath }}/{{ include "git-generator.clusterName" . }}.yml
+              {{'{{-'}} end }}'{{'}}'}}
+              {{ include "helm.valuesFiles" . | indent 12 }}
+            values: |-
+              {{- include "values.global" . | nindent 14 }}
+              Flavor: '{{'{{ $Flavor }}'}}'
+              valueFilesPaths:
+                {{ include "helm.valuesFiles" . | indent 18 }}
+        path: hub-apps
