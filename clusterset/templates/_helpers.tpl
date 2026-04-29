@@ -7,8 +7,7 @@
 {{`
 {{- $segments := .path.segments -}}
 {{- range $i := untilStep `}}{{$basePathLen}}{{` (len $segments | add 1 | int) 1 }}
-- $definitions/`}}{{`/{{ join "/" (slice $segments 0 $i ) }}/`}}{{- .Values.appFile.prefix }}{{ .Values.appFile.name }}{{`
+- $definitions/`}}{{`{{ join "/" (slice $segments 0 $i) }}/`}}{{- .Values.appFile.prefix }}{{ .Values.appFile.name }}{{`
 {{- end }}
-- $definitions/{{ .path.path }}/`}}{{- .Values.appFile.prefix }}{{ .Values.appFile.name }}{{`
 `}}
 {{- end -}}
