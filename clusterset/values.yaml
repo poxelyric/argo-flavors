@@ -4,9 +4,9 @@ applicationset:
   namespace: argocd
   project: default
 definitionsRepo:
-  repoURL: https://github.com/example/clusters-repo
+  repoURL: https://github.com/poxelyric/definition-flavors.git
   targetRevision: HEAD
-  basePath: test
+  basePath: example-definitions/myargo
 appFile:
   prefix: "_"
   name: apps.yaml

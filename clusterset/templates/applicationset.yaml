@@ -10,13 +10,15 @@ spec:
       revision: {{ .Values.definitionsRepo.targetRevision | quote }}
       files:
       - path: "{{ .Values.definitionsRepo.basePath }}/**/{{ .Values.env }}/[^{{ .Values.appFile.prefix }}]*.yaml"
-  templatePatch: |-
+  template:
     metadata:
       name: '{{ include "clusterset.clusterName" . }}'
     spec:
       destination:
         server: https://kubernetes.default.svc
       project: {{ .Values.applicationset.project | default "default" }}
+  templatePatch: |-
+    spec:
       sources:
         - repoURL: {{ .Values.definitionsRepo.repoURL | quote }}
           targetRevision: {{ .Values.definitionsRepo.targetRevision | quote }}
