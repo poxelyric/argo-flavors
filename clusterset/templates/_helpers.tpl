@@ -2,6 +2,14 @@
 {{`{{ .path.filename | trimSuffix ".yml" | trimSuffix ".yaml" }}`}}
 {{- end -}}
 
+{{- define "clusterset.flavor" -}}
+{{- $basePathLen := len (splitList "/" .Values.definitionsRepo.basePath) | int -}}
+{{`
+{{- $segments := .path.segments -}}
+{{-slice $segments `}}{{ $basePathLen }}{{` (len $segments | int) | join "-" -}}
+`}}
+{{- end -}}
+
 {{- define "clusterset.valueFiles" -}}
 {{- $basePathLen := len (splitList "/" .Values.definitionsRepo.basePath) | int -}}
 {{`
