@@ -6,18 +6,24 @@ metadata:
 spec:
   generators:
   - git:
-      repoURL: {{ .Values.applicationset.definitionsRepo.repoURL | quote }}
-      revision: {{ .Values.applicationset.definitionsRepo.targetRevision | quote }}
+      repoURL: {{ .Values.definitionsRepo.repoURL | quote }}
+      revision: {{ .Values.definitionsRepo.targetRevision | quote }}
       files:
-      - path: "{{ .Values.applicationset.definitionsRepo.basePath }}/**/{{ .Values.env }}/[^_]*.yaml"
-  template:
+      - path: "{{ .Values.definitionsRepo.basePath }}/**/{{ .Values.env }}/[^{{ .Values.appFile.prefix }}]*.yaml"
+  templatePatch: |-
     metadata:
-      name: '{{`{{path.basename}}`}}-cluster'
+      name: '{{ include "clusterset.clusterName" . }}'
     spec:
-      project: default
-      source:
-        repoURL: https://machine    #TODO: Update this to the actual repo URL where the deployment charts is stored
-        targetRevision: HEAD #TODO: Edit from values.yaml
-        path: serviceset
       destination:
         server: https://kubernetes.default.svc
+      project: {{ .Values.applicationset.project | default "default" }}
+      sources:
+        - repoURL: {{ .Values.definitionsRepo.repoURL | quote }}
+          targetRevision: {{ .Values.definitionsRepo.targetRevision | quote }}
+          ref: definitions
+        - repoURL: https://machine    #TODO: Update this to the actual repo URL where the deployment charts is stored
+          targetRevision: HEAD #TODO: Edit from values.yaml
+          path: serviceset
+          helm:
+            valueFiles:
+              {{- include "clusterset.valueFiles" . | indent 14 }}

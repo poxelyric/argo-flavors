@@ -2,6 +2,11 @@
 applicationset:
   name: clusters-applicationset
   namespace: argocd
-  definitionsRepo:
-    repoURL: https://github.com/example/clusters-repo
-    targetRevision: HEAD
+  project: default
+definitionsRepo:
+  repoURL: https://github.com/example/clusters-repo
+  targetRevision: HEAD
+  basePath: test
+appFile:
+  prefix: "_"
+  name: apps.yaml
