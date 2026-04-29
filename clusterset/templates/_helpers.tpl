@@ -3,7 +3,7 @@
 {{- end -}}
 
 {{- define "clusterset.valueFiles" -}}
-{{- $basePathLen := len (splitList "/" .Values.definitionsRepo.basePath) -}}
+{{- $basePathLen := len (splitList "/" .Values.definitionsRepo.basePath) | int -}}
 {{`
 {{- $segments := .path.segments -}}
 {{- range $i := untilStep $basePathLen (len $segments | add 1 | int) 1 }}
