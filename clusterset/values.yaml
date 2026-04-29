@@ -4,9 +4,10 @@ applicationset:
   namespace: argocd
   project: default
 definitionsRepo:
-  repoURL: https://github.com/poxelyric/definition-flavors.git
+  repoURL: https://github.com/poxelyric/argo-flavors.git
   targetRevision: HEAD
   basePath: example-definitions/myargo
 appFile:
   prefix: "_"
   name: apps.yaml
+env: staging
