@@ -1,5 +1,5 @@
 {{- define "clusterset.clusterName" -}}
-{{`{{ .path.fileame | trimSuffix ".yml" | trimSuffix ".yaml" }}`}}
+{{`{{ .path.filename | trimSuffix ".yml" | trimSuffix ".yaml" }}`}}
 {{- end -}}
 
 {{- define "clusterset.valueFiles" -}}

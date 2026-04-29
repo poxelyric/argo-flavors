@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.applicationset.name }}
   namespace: {{ .Values.applicationset.namespace }}
 spec:
+  goTemplate: true
   generators:
   - git:
       repoURL: {{ .Values.definitionsRepo.repoURL | quote }}
