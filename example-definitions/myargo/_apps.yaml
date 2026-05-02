@@ -7,8 +7,6 @@ apps:
   # Base podinfo application visible to all flavors.
   podinfo-four-nations:
     spec:
-      destination:
-        namespace: podinfo
       source:
         repoURL: https://stefanprodan.github.io/podinfo
         chart: podinfo
@@ -22,8 +20,6 @@ apps:
   # Example of a chart loaded from a git repository path.
   podinfo-git:
     spec:
-      destination:
-        namespace: podinfo-git
       source:
         repoURL: https://github.com/stefanprodan/podinfo.git
         path: charts/podinfo
@@ -44,5 +40,3 @@ apps:
         - repoURL: https://github.com/argoproj/argocd-example-apps.git
           targetRevision: HEAD
           path: guestbook
-      destination:
-        namespace: multi-source
