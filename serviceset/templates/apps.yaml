@@ -1,4 +1,5 @@
-{{- range $k, $v := get .Values .Values.appDictKey }}
+{{- $apps := merge dict (get .Values .Values.appDictKey) -}}
+{{- range $k, $v := $apps }}
 {{- $context := dict "Values" $.Values "appName" $k }}
 {{- $defaultApp := tpl (toYaml $.Values.defaults) $context | fromYaml }}
 {{- $patches := tpl (toYaml $v) $context | fromYaml }}
