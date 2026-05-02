@@ -10,10 +10,10 @@ spec:
       repoURL: {{ .Values.definitionsRepo.repoURL | quote }}
       revision: {{ .Values.definitionsRepo.targetRevision | quote }}
       files:
-      - path: "{{ .Values.definitionsRepo.basePath }}/**/{{ .Values.env }}/[^{{ .Values.appFile.prefix }}]*.yaml"
+      - path: "{{ .Values.definitionsRepo.basePath }}/**/{{ .Values.env }}/[^{{ .Values.appsFile.prefix }}]*.yaml"
   template:
     metadata:
-      name: '{{ include "clusterset.clusterName" . }}'
+      name: '{{ include "clusterset.clusterName" . }}{{ .Values.appSuffix }}'
     spec:
       destination:
         server: https://kubernetes.default.svc
@@ -28,5 +28,7 @@ spec:
           targetRevision: HEAD #TODO: Edit from values.yaml
           path: serviceset
           helm:
+            values: |-
+              {{- include "clusterset.values" . | indent 14 }}
             valueFiles:
               {{- include "clusterset.valueFiles" . | indent 14 }}

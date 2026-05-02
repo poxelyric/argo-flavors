@@ -1,29 +1,32 @@
-# Default values for serviceset chart
-applicationset:
-  name: services-applicationset
-  namespace: argocd
-
 defaults:
+  apiVersion: argoproj.io/v1alpha1
+  kind: Application
+  metadata:
+    name: "{{ .appName }}-{{ .Values.clusterName }}"
+    #namespace: argocd
   spec:
-    project: default
-    source:
-      repoURL: https://github.com/example/services-repo
-      targetRevision: HEAD
-      path: .
     destination:
       server: https://kubernetes.default.svc
-      namespace: default
+    #project: default
+    source:
+      repoURL: https://github.com/example/services-repo
 
-apps:
-  service1:
-    spec:
-      source:
-        path: service1
-      destination:
-        namespace: service1
-  service2:
-    spec:
-      source:
-        path: service2
-      destination:
-        namespace: service2
+appDictKey: apps
+
+# default clusterName for testing purposes
+clusterName: myCluster
+
+# Uncomment to test repo localy
+# apps:
+  # service1:
+    # spec:
+      # source:
+        # path: service1
+      # destination:
+        # namespace: service1
+  # service2:
+    # spec:
+      # source:
+        # path: service2
+      # destination:
+        # namespace: service2
