@@ -1,7 +1,8 @@
 defaults:
-  syncPolicy:
-    syncOptions:
-      - CreateNamespace=true
+  spec:
+    syncPolicy:
+      syncOptions:
+        - CreateNamespace=true
 apps:
   # Base podinfo application visible to all flavors.
   podinfo-four-nations:
