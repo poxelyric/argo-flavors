@@ -2,5 +2,5 @@ apps:
   service1:
     spec:
       source:
-        repoUrl: https://github.com/argoproj/argocd-example-apps.git
+        repoURL: https://github.com/argoproj/argocd-example-apps.git
         path: guestbook

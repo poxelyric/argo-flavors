@@ -3,7 +3,7 @@ defaults:
   kind: Application
   metadata:
     name: "{{ .appName }}-{{ .Values.clusterName }}"
-    #namespace: argocd
+    namespace: argocd
   spec:
     destination:
       server: https://kubernetes.default.svc
@@ -18,15 +18,15 @@ clusterName: myCluster
 
 # Uncomment to test repo localy
 # apps:
-  # service1:
-    # spec:
-      # source:
-        # path: service1
-      # destination:
-        # namespace: service1
-  # service2:
-    # spec:
-      # source:
-        # path: service2
-      # destination:
-        # namespace: service2
+#   service1:
+#     spec:
+#       source:
+#         path: service1
+#       destination:
+#         namespace: service1
+#   service2:
+#     spec:
+#       source:
+#         path: service2
+#       destination:
+#         namespace: service2
