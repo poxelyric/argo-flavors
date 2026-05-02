@@ -1,0 +1,15 @@
+defaults:
+  spec:
+    destination:
+      namespace: earth-kingdom
+apps:
+  podinfo-four-nations:
+    spec:
+      destination:
+        namespace: earth
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Earth Kingdom visitors page"
+              logo: "https://placehold.co/250x250/228B22/ffffff?text=Earth+Kingdom"

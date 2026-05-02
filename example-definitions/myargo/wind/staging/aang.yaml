@@ -1,0 +1,10 @@
+apps:
+  podinfo-four-nations:
+    spec:
+      destination:
+        namespace: aang
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Aang's page: harmony and air"

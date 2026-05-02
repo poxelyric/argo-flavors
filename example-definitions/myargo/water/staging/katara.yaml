@@ -1,0 +1,10 @@
+apps:
+  podinfo-four-nations:
+    spec:
+      destination:
+        namespace: katara
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Katara's page: water heals all"

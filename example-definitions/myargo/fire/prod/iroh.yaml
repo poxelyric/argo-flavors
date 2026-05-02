@@ -1,0 +1,10 @@
+apps:
+  podinfo-four-nations:
+    spec:
+      destination:
+        namespace: iroh
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Uncle Iroh's tea shop"

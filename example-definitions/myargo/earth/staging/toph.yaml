@@ -1,0 +1,10 @@
+apps:
+  podinfo-four-nations:
+    spec:
+      destination:
+        namespace: toph
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Toph's page, unbreakable and bold"

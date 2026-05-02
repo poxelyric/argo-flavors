@@ -1,0 +1,10 @@
+apps:
+  podinfo-four-nations:
+    spec:
+      destination:
+        namespace: zuko
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Zuko, banished prince turned hero"
