@@ -21,8 +21,8 @@ appDictKey: apps
 
 mutuallyExclusiveFields: [
   [
-  spec.source,
-  spec.sources
+  spec.sources,
+  spec.source
   ],
   [
   spec.source.kustomize,
