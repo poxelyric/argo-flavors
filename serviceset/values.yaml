@@ -17,6 +17,10 @@ defaults:
         patchesStrategicMerge:
           - patch.yaml
 
+overrides:
+  # spec:
+  #   syncPolicy: null
+
 appDictKey: apps
 
 mutuallyExclusiveFields: [
@@ -35,29 +39,34 @@ mutuallyExclusiveFields: [
 # default clusterName for testing purposes
 clusterName: myCluster
 
+
 # Uncomment to test repo localy
-# apps:
-#   service1:
-#     spec:
-#       source:
-#         path: service1
-#       destination:
-#         namespace: service1
-#   service2:
-#     spec:
-#       source:
-#         path: service2
-#         kustomize:
-#           namePrefix: "{{ .Values.clusterName }}"
-#       destination:
-#         namespace: service2
-#   service3:
-#     metadata:
-#       labels:
-#         app: service3
-#     spec:
-#       sources:
-#         - path: service3
-#           repoURL: https://github.com/example/services-repo
-#       destination:
-#         namespace: service3
+apps:
+  # service1:
+  #   spec:
+  #     source:
+  #       path: service1
+  #     destination:
+  #       namespace: service1
+  #     syncPolicy:
+  #       automated:
+  #         prune: true
+  #         selfHeal: true
+  # service2:
+  #   spec:
+  #     source:
+  #       path: service2
+  #       kustomize:
+  #         namePrefix: "{{ .Values.clusterName }}"
+  #     destination:
+  #       namespace: service2
+  # service3:
+  #   metadata:
+  #     labels:
+  #       app: service3
+  #   spec:
+  #     sources:
+  #       - path: service3
+  #         repoURL: https://github.com/example/services-repo
+  #     destination:
+  #       namespace: service3
