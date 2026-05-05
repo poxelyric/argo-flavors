@@ -13,6 +13,19 @@ defaults:
 
 appDictKey: apps
 
+mutuallyExclusiveFields: [
+  [
+  spec.source,
+  spec.sources
+  ],
+  [
+  spec.source.helm,
+  spec.source.kustomize,
+  spec.source.directory,
+  spec.source.plugin
+  ]
+]
+
 # default clusterName for testing purposes
 clusterName: myCluster
 
@@ -28,5 +41,12 @@ clusterName: myCluster
 #     spec:
 #       source:
 #         path: service2
+#       destination:
+#         namespace: service2
+#   service3:
+#     spec:
+#       sources:
+#         - path: service2
+#           repoURL: https://github.com/example/services-repo
 #       destination:
 #         namespace: service2
