@@ -10,6 +10,12 @@ defaults:
     project: default
     source:
       repoURL: https://github.com/example/services-repo
+      helm:
+        valueFiles:
+          - values.yaml
+      kustomize:
+        patchesStrategicMerge:
+          - patch.yaml
 
 appDictKey: apps
 
@@ -19,10 +25,10 @@ mutuallyExclusiveFields: [
   spec.sources
   ],
   [
-  spec.source.helm,
   spec.source.kustomize,
   spec.source.directory,
-  spec.source.plugin
+  spec.source.plugin,
+  spec.source.helm
   ]
 ]
 
@@ -41,12 +47,17 @@ clusterName: myCluster
 #     spec:
 #       source:
 #         path: service2
+#         kustomize:
+#           namePrefix: "{{ .Values.clusterName }}"
 #       destination:
 #         namespace: service2
 #   service3:
+#     metadata:
+#       labels:
+#         app: service3
 #     spec:
 #       sources:
-#         - path: service2
+#         - path: service3
 #           repoURL: https://github.com/example/services-repo
 #       destination:
-#         namespace: service2
+#         namespace: service3

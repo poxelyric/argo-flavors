@@ -20,10 +20,16 @@ The function does not return anything, it modifies the given app in place.
 {{- $patchApp := index . 1 -}}
 {{- $mutuallyExclusiveFields := index . 2 -}}
 {{- range $fields := $mutuallyExclusiveFields -}}
-{{- range $path := $fields -}}
-  {{- if and (ne "can't find path" (include "serviceset.digByPath" (list $path "can't find path" $givenApp))) (eq "can't find path" (include "serviceset.digByPath" (list $path "can't find path" $patchApp))) -}}
-    {{- $lst := splitList "." $path -}}
-    {{- tpl (print "{{- $_ := unset ." (initial $lst | join ".") " " (last $lst | quote) " -}}") $givenApp -}}
+{{- $found := false -}}
+{{- /* Iterate over each field and unset it if it's present in the given app but not in the patch app. If reached the last field and no field was found in the patch app, don't unset it */ -}}
+{{- range $i, $path := $fields -}}
+  {{- if ne "can't find path" (include "serviceset.digByPath" (list $path "can't find path" $givenApp)) -}}
+    {{- if and (eq "can't find path" (include "serviceset.digByPath" (list $path "can't find path" $patchApp))) (or $found (ne $i (sub (len $fields) 1)) ) -}}
+      {{- $lst := splitList "." $path -}}
+      {{- tpl (print "{{- $_ := unset ." (initial $lst | join ".") " " (last $lst | quote) " -}}") $givenApp -}}
+    {{- else -}}
+      {{ $found = true }}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- end -}}
