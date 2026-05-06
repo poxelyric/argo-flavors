@@ -1,4 +1,6 @@
-<div style="text-align: center;"><img src="docs/assets/logo.png" style="height:50vh;"></div>
+<p align="center">
+    <img src="docs/assets/logo.png" style="height:50vh;">
+</p>
 
 # Argo Flavors
 
