@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="docs/assets/logo.png" style="width:75%">
+    <img src="docs/assets/logo.png" style="width:66%">
 </p>
 
 # Argo Flavors
