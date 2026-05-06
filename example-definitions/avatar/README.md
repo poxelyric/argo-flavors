@@ -4,7 +4,7 @@ This example is intentionally focused on patching an existing app definition usi
 
 ## What is demonstrated
 
-- Root level defines the base set of apps in `example-definitions/myargo/_apps.yaml`.
+- Root level defines the base set of apps in `example-definitions/avatar/_apps.yaml`.
 - Flavor-level files modify the same app names from the root.
 - Environment-level `_apps.yaml` files are kept empty to keep the demo simple.
 - Cluster files still have the highest precedence and can make the final, cluster-specific patch.
