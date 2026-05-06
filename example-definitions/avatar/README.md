@@ -1,6 +1,15 @@
-# myargo example definitions
+# avatar example definitions
 
 This example is intentionally focused on patching an existing app definition using the same app name across multiple levels.
+
+# NOTE
+This example doesn't deploy to remote clusters in order to simplify getting started. You can edit the `defaults` field in the root `_apps.yaml` file in order to template a url or name for destination:
+```yml
+defaults:
+  spec:
+    destination:
+      server: "https://{{ .Values.clusterName }}.example.com"
+```
 
 ## What is demonstrated
 
@@ -11,37 +20,24 @@ This example is intentionally focused on patching an existing app definition usi
 
 ## Root apps
 
-The root file defines three apps:
+The [root file](_apps.yaml) defines three apps:
 
-- `podinfo-four-nations` (Helm repo chart)
+- `podinfo-helm` (Helm repo chart)
 - `podinfo-git` (Git repo chart path)
 - `podinfo-multi-source` (multiple `sources:` entries)
 
 ## Flavor patching
 
-- Earth flavor patches `podinfo-four-nations` for the Earth Kingdom.
-- Fire flavor patches `podinfo-four-nations` for the Fire Nation and removes `podinfo-git`.
-- Water and Wind flavors patch `podinfo-four-nations` with their own messages.
+- Earth flavor patches `podinfo-helm` for the Earth Kingdom.
+- Fire flavor patches `podinfo-helm` for the Fire Nation and removes `podinfo-git`.
+- Water and Wind flavors patch `podinfo-helm` with their own messages.
 - `fire/lightning` is a subflavor of Fire that inherits Fire behavior and adds lightning-specific capabilities.
 
 ## Environment and cluster precedence
 
 This demo uses a small set of files so users can see the layering without overload:
 
-1. `example-definitions/myargo/_apps.yaml`
-2. `example-definitions/myargo/<flavor>/_apps.yaml`
-3. `example-definitions/myargo/<flavor>/<env>/_apps.yaml` (empty)
-4. `example-definitions/myargo/<flavor>/<env>/<cluster>.yaml`
-
-The environment `_apps.yaml` files exist but do not introduce additional app logic in this example.
-
-## Avatar theme
-
-- `earth/staging/toph.yaml`
-- `fire/staging/zuko.yaml`
-- `fire/prod/iroh.yaml`
-- `fire/lightning/prod/azula.yaml`
-- `water/staging/katara.yaml`
-- `wind/staging/aang.yaml`
-
-Each cluster file can patch the existing `podinfo-four-nations` app to show how final overrides work.
+1. `example-definitions/avatar/_apps.yaml`
+2. `example-definitions/avatar/<flavor>/_apps.yaml`
+3. `example-definitions/avatar/<flavor>/<env>/_apps.yaml`
+4. `example-definitions/avatar/<flavor>/<env>/<cluster>.yaml`

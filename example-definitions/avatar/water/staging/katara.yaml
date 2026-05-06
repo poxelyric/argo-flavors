@@ -1,5 +1,5 @@
 apps:
-  podinfo-four-nations:
+  podinfo-helm:
     spec:
       destination:
         namespace: katara

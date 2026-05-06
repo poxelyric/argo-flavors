@@ -1,8 +1,6 @@
 apps:
-  podinfo-four-nations:
+  podinfo-helm:
     spec:
-      destination:
-        namespace: iroh
       source:
         helm:
           valuesObject:

@@ -1,9 +1,5 @@
-defaults:
-  spec:
-    destination:
-      namespace: earth-kingdom
 apps:
-  podinfo-four-nations:
+  podinfo-helm:
     spec:
       destination:
         namespace: earth

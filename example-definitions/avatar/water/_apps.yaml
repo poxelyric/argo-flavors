@@ -1,12 +1,10 @@
 defaults:
-  spec:
-    destination:
-      namespace: water-tribe
+  metadata:
+    annotations:
+      pole.location: "north-pole"
 apps:
-  podinfo-four-nations:
+  podinfo-helm:
     spec:
-      destination:
-        namespace: water
       source:
         helm:
           valuesObject:

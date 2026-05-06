@@ -3,12 +3,14 @@ defaults:
     annotations:
       annotation.to.show.features: "{{ .Values.clusterName }}.{{ .Values.appName }}.{{ .Values.flavor }}"
   spec:
+    destination:
+      namespace: "{{ .Values.clusterName }}"
     syncPolicy:
       syncOptions:
         - CreateNamespace=true
 apps:
   # Base podinfo application visible to all flavors.
-  podinfo-four-nations:
+  podinfo-helm:
     spec:
       source:
         repoURL: https://stefanprodan.github.io/podinfo

@@ -5,10 +5,10 @@
 {{- define "clusterset.values" -}}
 {{- $basePathLen := len (splitList "/" .Values.definitionsRepo.basePath) | int -}}
 {{`
-{{- $segments := .path.segments }}
-{{- $flavorSegments := slice $segments `}}{{ $basePathLen }}{{` (sub (len $segments) 1) }}
+{{- $flavorSegments := slice .path.segments `}}{{ $basePathLen }}{{` (sub (len $segments) 1) }}
 flavor: {{ $flavorSegments | join "-" }}
 clusterName: `}}{{ include "clusterset.clusterName" . }}{{`
+env: `}}{{ .Values.env }}{{`
 `}}
 {{- end -}}
 

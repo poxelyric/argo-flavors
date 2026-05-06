@@ -1,12 +1,6 @@
-defaults:
-  spec:
-    destination:
-      namespace: wind-temple
 apps:
-  podinfo-four-nations:
+  podinfo-helm:
     spec:
-      destination:
-        namespace: wind
       source:
         helm:
           valuesObject:

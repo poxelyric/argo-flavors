@@ -1,12 +1,9 @@
 apps:
-  podinfo-four-nations:
+  podinfo-helm:
     spec:
-      destination:
-        namespace: lightning
       source:
         helm:
           valuesObject:
             replicaCount: 2
             ui:
               message: "Lightning bending strikes with precision"
-            flavor: fire
