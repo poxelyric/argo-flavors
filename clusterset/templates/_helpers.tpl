@@ -6,7 +6,7 @@
 {{- $basePathLen := len (splitList "/" .Values.definitionsRepo.basePath) | int -}}
 {{`
 {{- $segments := .path.segments }}
-{{- $flavorSegments := slice $segments `}}{{ $basePathLen }}{{` (len $segments | int) }}
+{{- $flavorSegments := slice $segments `}}{{ $basePathLen }}{{` (sub (len $segments) 1) }}
 flavor: {{ $flavorSegments | join "-" }}
 clusterName: `}}{{ include "clusterset.clusterName" . }}{{`
 `}}
