@@ -1,17 +1,30 @@
 ![logo](docs/assets/logo.png)
-# What is Argo Flavors?
-A deployment scheme for environments with hundreds of clusters.
-Argo Flavors allows you to group clusters into flavors and sub flavors to deploy your apps with minimal text and maximal control.
+
+# Argo Flavors
+
+Argo Flavors is a deployment framework for Argo CD environments that need to manage applications across many clusters. It enables you to define flavors and sub-flavors, reducing repetition while preserving precise control over cluster-specific settings.
 
 ## Features
-* inheritance and sub flavors
-* specific cluster configuration
-* dynamic templating inside app definition
-* environment seperation
 
-# How does it work?
-Argo Flavors is built around using multiple yaml files as values for a helm app. Helm will merge the files to create a final rendered values that contains your applications definitions.
-See [avater example](example-definitions/avatar/README.md) for the Avatar-themed flavor example.
+- Nested flavor inheritance
+- Cluster-specific overrides
+- Dynamic templating in application values
+- Environment separation that maintains conformity to overall system definitions
+- Designed for large-scale, multi-cluster deployments
 
-# Who is this for?
-Anyone who deploys applications in argocd can make use of this project, but it was created to handle projects that manage many many clusters. If you deploy applications to tens or hundreds of clusters and want to manage it all from a single git repo, this project might be use full for you. When governance is required but divercity is inevitable, Argo Flavors comes to the rescue.
+## How it works
+
+Argo Flavors treats multiple YAML files as Helm values. Helm merges those files into a single rendered values document that defines your applications and deployment parameters.
+
+See the [Avatar example](example-definitions/avatar/README.md) for a sample flavor structure.
+
+## Who should use it?
+
+This project is ideal for teams using Argo CD to manage tens or hundreds of clusters from a single Git repository. Argo Flavors helps maintain governance, reduce duplication, and keep configuration consistent.
+
+## Why choose Argo Flavors?
+
+- Simplifies multi-cluster deployments
+- Reduces repeated configuration through inheritance
+- Makes environment boundaries explicit
+- Enables targeted customization per cluster
