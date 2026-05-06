@@ -1,4 +1,7 @@
 defaults:
+  metadata:
+    annotations:
+      annotation.to.show.features: "{{ .Values.clusterName }}.{{ .Values.appName }}.{{ .Values.flavor }}"
   spec:
     syncPolicy:
       syncOptions:
