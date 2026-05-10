@@ -1,0 +1,32 @@
+defaults:
+  metadata:
+    labels:
+      edge: "true"
+  spec:
+    project: agent-default
+    destination:
+      name: "{{ .Values.appName }}"
+    syncPolicy:
+      syncOptions:
+        - CreateNamespace=true
+apps:
+  guestbook:
+    spec:
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps
+        targetRevision: HEAD
+        path: guestbook
+      syncPolicy:
+        automated: {}
+
+  podinfo-helm:
+    spec:
+      source:
+        repoURL: https://stefanprodan.github.io/podinfo
+        chart: podinfo
+        targetRevision: 6.1.5
+        helm:
+          valuesObject:
+            replicaCount: 1
+            ui:
+              message: "argo-cd agent is cool"

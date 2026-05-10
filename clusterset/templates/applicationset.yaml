@@ -1,8 +1,8 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: {{ .Values.applicationset.name }}
-  namespace: {{ .Values.applicationset.namespace }}
+  name: {{ .Values.applicationset.name | default .Release.Name }}
+  namespace: {{ include "clusterset.namespace" . }}
 spec:
   goTemplate: true
   generators:
@@ -24,9 +24,9 @@ spec:
         - repoURL: {{ .Values.definitionsRepo.repoURL | quote }}
           targetRevision: {{ .Values.definitionsRepo.targetRevision | quote }}
           ref: definitions
-        - repoURL: https://machine    #TODO: Update this to the actual repo URL where the deployment charts is stored
-          targetRevision: HEAD #TODO: Edit from values.yaml
-          path: serviceset
+        - repoURL: {{ .Values.servicesetSource.repoURL | quote }}
+          targetRevision: {{ .Values.servicesetSource.targetRevision | quote }}
+          path: {{ .Values.servicesetSource.path }}
           helm:
             values: |-
               {{- include "clusterset.values" . | indent 14 }}

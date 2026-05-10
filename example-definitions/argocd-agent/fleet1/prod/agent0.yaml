@@ -1,0 +1,3 @@
+overrides:
+  spec:
+    syncPolicy: null

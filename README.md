@@ -31,3 +31,43 @@ This project is ideal for teams using Argo CD to manage tens or hundreds of clus
 - ♻️ Reduces repeated configuration through inheritance
 - 🎨 Makes environment boundaries explicit
 - 🎯 Enables targeted customization per cluster
+
+## 📚 Documentation
+
+Complete documentation is available in the [docs/](docs/) directory:
+
+- **[Architecture](docs/architecture.md)** - How Argo Flavors works
+- **[Features](docs/features.md)** - Complete feature overview
+- **[Advanced Guide](docs/advanced-guide.md)** - Complex configurations
+- **[Examples](docs/examples.md)** - Learn from included examples
+
+## 🚀 Quick Start
+
+You can get started quickly with the avatar themed example in this repo. This example deploys apps to local cluster (Even though the project is intended for deploying to other clusters) to help you get started. so no cluster configuration is required other than a working argocd instance:
+```bash
+cat << EOF | kubectl apply -f - -n argocd
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clusterset-staging
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  project: default
+  source:
+    helm:
+      parameters:
+      - name: definitionsRepo.repoURL
+        value:https://github.com/poxelyric/argo-flavors.git
+      - name: definitionsRepo.targetRevision
+        value: HEAD
+      - name: definitionsRepo.basePath
+        value: example-definitions/avatar
+    path: clusterset
+    repoURL: https://github.com/poxelyric/argo-flavors.git
+    targetRevision: HEAD
+```
+See [README](example-definitions/avatar/README.md) for a walkthrough.
+
+Check out the other [examples](docs/examples.md) to see how you can adapt this project to different architectures

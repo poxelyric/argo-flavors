@@ -1,12 +1,19 @@
 # Default values for clusterset chart
-applicationset:
-  name: clusters-applicationset
-  namespace: argocd
-  project: default
+applicationset: {}
+  # name: clusters-applicationset
+  # namespaceOverride: argocd
+  # project: default
+
 definitionsRepo:
   repoURL: https://github.com/poxelyric/argo-flavors.git
   targetRevision: HEAD
   basePath: example-definitions/myargo
+
+servicesetSource:
+  repoURL: https://github.com/poxelyric/argo-flavors.git
+  targetRevision: HEAD
+  path: serviceset
+
 appsFile:
   prefix: "_"
   name: apps.yaml

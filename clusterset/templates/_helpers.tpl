@@ -22,3 +22,11 @@ env: `}}{{ .Values.env }}{{`
 - $definitions/{{ .path.path }}/{{ .path.filename }}
 `}}
 {{- end -}}
+
+{{- define "clusterset.namespace" -}}
+{{- if .Values.applicationset.namespaceOverride -}}
+{{- .Values.applicationset.namespaceOverride -}}
+{{- else -}}
+{{- .Release.Namespace -}}
+{{- end -}}
+{{- end -}}
