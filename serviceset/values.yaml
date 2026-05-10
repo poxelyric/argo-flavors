@@ -8,6 +8,7 @@ defaults:
       clusterName: "{{ .Values.clusterName }}"
       flavor: "{{ .Values.flavor }}"
       env: "{{ .Values.env }}"
+      type: service
   spec:
     destination:
       server: https://kubernetes.default.svc

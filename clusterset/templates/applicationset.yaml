@@ -14,11 +14,16 @@ spec:
   template:
     metadata:
       name: '{{ include "clusterset.clusterName" . }}{{ .Values.appSuffix }}'
+      labels:
+        type: serviceset
+        env: {{ .Values.env | quote}}
     spec:
       destination:
         server: https://kubernetes.default.svc
       project: {{ .Values.applicationset.project | default "default" }}
   templatePatch: |-
+    syncPolicy:
+      {{- toYaml .Values.syncPolicy | nindent 6 }}
     spec:
       sources:
         - repoURL: {{ .Values.definitionsRepo.repoURL | quote }}

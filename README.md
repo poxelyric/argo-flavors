@@ -50,6 +50,8 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: clusterset-staging
+  labels:
+    type: clusterset
 spec:
   destination:
     server: https://kubernetes.default.svc
