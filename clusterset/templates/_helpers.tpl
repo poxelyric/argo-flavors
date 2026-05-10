@@ -5,7 +5,7 @@
 {{- define "clusterset.values" -}}
 {{- $basePathLen := len (splitList "/" .Values.definitionsRepo.basePath) | int -}}
 {{`
-{{- $flavorSegments := slice .path.segments `}}{{ $basePathLen }}{{` (sub (len $segments) 1) }}
+{{- $flavorSegments := slice .path.segments `}}{{ $basePathLen }}{{` (sub (len .path.segments) 1) }}
 flavor: {{ $flavorSegments | join "-" }}
 clusterName: `}}{{ include "clusterset.clusterName" . }}{{`
 env: `}}{{ .Values.env }}{{`
@@ -15,9 +15,8 @@ env: `}}{{ .Values.env }}{{`
 {{- define "clusterset.valueFiles" -}}
 {{- $basePathLen := len (splitList "/" .Values.definitionsRepo.basePath) | int -}}
 {{`
-{{- $segments := .path.segments -}}
-{{- range $i := untilStep `}}{{$basePathLen}}{{` (len $segments | add 1 | int) 1 }}
-- $definitions/`}}{{`{{ join "/" (slice $segments 0 $i) }}/`}}{{- .Values.appsFile.prefix }}{{ .Values.appsFile.name }}{{`
+{{- range $i := untilStep `}}{{$basePathLen}}{{` (len .path.segments | add 1 | int) 1 }}
+- $definitions/`}}{{`{{ join "/" (slice $.path.segments 0 $i) }}/`}}{{- .Values.appsFile.prefix }}{{ .Values.appsFile.name }}{{`
 {{- end }}
 - $definitions/{{ .path.path }}/{{ .path.filename }}
 `}}

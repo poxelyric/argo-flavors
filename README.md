@@ -44,7 +44,7 @@ Complete documentation is available in the [docs/](docs/) directory:
 ## 🚀 Quick Start
 
 You can get started quickly with the avatar themed example in this repo. This example deploys apps to local cluster (Even though the project is intended for deploying to other clusters) to help you get started. so no cluster configuration is required other than a working argocd instance:
-```bash
+```shell
 cat << EOF | kubectl apply -f - -n argocd
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -59,7 +59,7 @@ spec:
     helm:
       parameters:
       - name: definitionsRepo.repoURL
-        value:https://github.com/poxelyric/argo-flavors.git
+        value: https://github.com/poxelyric/argo-flavors.git
       - name: definitionsRepo.targetRevision
         value: HEAD
       - name: definitionsRepo.basePath
@@ -67,6 +67,7 @@ spec:
     path: clusterset
     repoURL: https://github.com/poxelyric/argo-flavors.git
     targetRevision: HEAD
+EOF
 ```
 See [README](example-definitions/avatar/README.md) for a walkthrough.
 
