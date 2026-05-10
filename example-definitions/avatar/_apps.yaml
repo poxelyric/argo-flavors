@@ -20,7 +20,7 @@ apps:
           valuesObject:
             replicaCount: 1
             ui:
-              message: "Welcome to the Four Nations"
+              message: "{{ .Values.clusterName }}'s page"
 
   # Example of a chart loaded from a git repository path.
   podinfo-git:
