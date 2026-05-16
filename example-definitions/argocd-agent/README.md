@@ -8,7 +8,7 @@
 login to your k8s cluster. This example was deployed on microk8s but it is agnostic to the type of cluster.
 
 ### create vclusters
-create vckusters and set up portforwarding.
+create vclusters and set up portforwarding.
 
 create principal:
 ```shell
