@@ -130,8 +130,8 @@ apps:         # Application-specific configurations
         repoURL: https://github.com/myorg/myapp
 ```
 
-[!IMPORTANT]
-while overrides have the highest precedence, they can still be changed by configuration files with higher precedence
+>[!IMPORTANT]
+>while overrides have the highest precedence, they can still be changed by configuration files with higher precedence
 
 
 ### Mutualy exclusive values
