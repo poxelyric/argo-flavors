@@ -1,9 +1,5 @@
 defaults:
-  metadata:
-    labels:
-      edge: "true"
   spec:
-    project: agent-default
     destination:
       name: "{{ .Values.clusterName }}"
     syncPolicy:

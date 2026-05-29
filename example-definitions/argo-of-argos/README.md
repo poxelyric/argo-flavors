@@ -22,7 +22,7 @@ MAIN_CTX=`kubectl config current-context`
 MANAGER_NAME=hub
 MANAGER_NS=vcluster-$MANAGER_NAME
 ARGOCD_VERSION=v3.4.1
-EDGE_CLUSTERS_NAMES=(edge1 edge2)
+EDGE_CLUSTERS_NAMES=(edge0 edge1)
 EDGE_CLUSTERS_NS=()
 EDGE_CLUSTERS_CONTEXTS=()
 ```
@@ -114,5 +114,38 @@ spec:
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
+EOF
+```
+
+### Deploy Flavors
+Apply this manifest to create a clusterset in the manager:
+```shell
+cat << EOF | kubectl apply -f - --context $MANAGER_CONTEXT
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clusterset-prod
+  namespace: argocd
+  labels:
+    type: clusterset
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  project: default
+  source:
+    helm:
+      parameters:
+      - name: definitionsRepo.repoURL
+        value: https://github.com/poxelyric/argo-flavors.git
+      - name: definitionsRepo.targetRevision
+        value: HEAD
+      - name: definitionsRepo.basePath
+        value: example-definitions/argo-of-argos/definitions
+      - name: env
+        value: prod
+    path: clusterset
+    repoURL: https://github.com/poxelyric/argo-flavors.git
+    targetRevision: HEAD
 EOF
 ```
