@@ -9,6 +9,7 @@ apps:
       destination:
         server: null
         name: "{{ .Values.clusterName }}"
+        namespace: argocd
       sources:
       - repoURL: https://github.com/argoproj/argo-cd.git
         targetRevision: v3.4.1
@@ -49,6 +50,9 @@ apps:
                 name: guestbook-ui
       syncPolicy:
         automated: {}
+        syncOptions:
+          - ServerSideApply=true
+          - CreateNamespace=true
 
 edgeApps:
   guestbook-ui:
