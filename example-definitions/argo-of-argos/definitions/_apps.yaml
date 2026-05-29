@@ -1,0 +1,72 @@
+defaults:
+  metadata:
+    labels:
+      edge: "true"
+  spec:
+    project: agent-default
+    destination:
+      name: "{{ .Values.clusterName }}"
+    syncPolicy:
+      syncOptions:
+        - CreateNamespace=true
+apps:
+  argocd-core:
+    spec:
+      sources:
+      - repoURL: https://github.com/argoproj/argo-cd.git
+        targetRevision: v3.4.1
+        path: manifests/core-install
+        kustomize:
+          namespace: argocd
+      - repoURL: https://github.com/poxelyric/argo-flavors.git
+        targetRevision: init-repo
+        ref: definitions
+      - repoURL: https://github.com/poxelyric/argo-flavors.git
+        targetRevision: init-repo
+        path: example-definitions/argo-of-argos/mediator-app
+        kustomize:
+          patches:
+            - patch: |-
+                - op: replace
+                  path: /spec/sources
+                  value:
+                    - ref: definitions
+                      repoURL: https://github.com/poxelyric/argo-flavors.git
+                      targetRevision: init-repo
+                    - repoURL: https://github.com/poxelyric/argo-flavors.git
+                      path: serviceset
+                      targetRevision: init-repo
+                      helm:
+                        values:
+                          appDictKey: edgeApps
+                          flavor: {{ .Values.flavor | quote }}
+                          clusterName: {{ .Values.clusterName | quote }}
+                          env: {{ .Values.env | quote }}
+                        valueFiles:
+                          {{- $path := .Values.flavor | splitList "-" }}
+                          {{- range $i := untilStep 3 (len $path) 1 }}
+                          example-definitions/argo-of-argos/definitions/{{ join "/" (slice $path 0 $i) }}/_apps.yaml
+                          {{- end }}
+              target:
+                kind: Service
+                name: guestbook-ui
+      syncPolicy:
+        automated: {}
+
+edgeApps:
+  guestbook-ui:
+    spec:
+      destination:
+        namespace: guestbook-ui
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps.git
+        targetRevision: HEAD
+        path: guestbook
+  podinfo:
+    spec:
+      destination:
+        namespace: podinfo
+      source:
+        repoURL: https://stefanprodan.github.io/podinfo
+        chart: podinfo
+        targetRevision: 6.1.5

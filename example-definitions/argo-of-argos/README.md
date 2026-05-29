@@ -1,5 +1,8 @@
 This example demonstrate the use of Argo Flavors to manage multiple clusters where each cluster has its own argocd instance to ease the load from the main argocd.
 
+> [!NOTE]
+> It is reccomended to use argocd agent with this project to get a cleaner deployment
+
 # Environment set up
 To deploy this example you will need an argocd instance connected to two clusters. The connected clusters don't have an argocd instance initially. If don't you already have an argocd instance, this part guides you through setting up a demo using vcluster.
 
@@ -60,6 +63,11 @@ kubectl create namespace argocd --context $MANAGER_CONTEXT
 kubectl apply --context $MANAGER_CONTEXT -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/$ARGOCD_VERSION/manifests/install.yaml
 ```
 
+wait for argocd to be ready:
+```shell
+kubectl --context $MANAGER_CONTEXT get po -n argocd
+```
+
 attach edge clusters:
 ```shell
 kubectl config set-context $MANAGER_CONTEXT --namespace argocd
@@ -72,7 +80,7 @@ for i in ${!EDGE_CLUSTERS_NAMES[@]}; do
   #get secret name created in manager by argo cli
   secret_name=`kubectl get secrets -n argocd -o jsonpath="{range .items[?(@.data.name==\"$(echo -n ${EDGE_CLUSTERS_NAMES[$i]} | base64)\")]}{.metadata.name}{\"\n\"}{end}"`
   # Edit url so argocd can access cluster
-  kubectl patch secret $secret -n argocd --type='json' -p="[{\"op\": \"replace\", \"path\": \"/data/server\", \"value\": \"$(echo -n "https://${EDGE_CLUSTERS_NAMES[$i]}.${EDGE_CLUSTERS_NS[$i]}" | base64)\"}]"
+  kubectl patch secret $secret_name -n argocd --type='json' -p="[{\"op\": \"replace\", \"path\": \"/data/server\", \"value\": \"$(echo -n "https://${EDGE_CLUSTERS_NAMES[$i]}.${EDGE_CLUSTERS_NS[$i]}" | base64)\"}]"
 done
 ```
 
@@ -94,8 +102,6 @@ kind: Application
 metadata:
   name: test-app
   namespace: argocd
-  labels:
-    edge: "true"
 spec:
   project: default
   source:

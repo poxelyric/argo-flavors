@@ -16,7 +16,7 @@ spec:
       name: '{{ include "clusterset.clusterName" . }}{{ .Values.appSuffix }}'
       labels:
         type: serviceset
-        env: {{ .Values.env | quote}}
+        env: {{ .Values.env | quote }}
     spec:
       destination:
         server: https://kubernetes.default.svc
