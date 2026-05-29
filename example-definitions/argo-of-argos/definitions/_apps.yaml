@@ -1,13 +1,13 @@
 defaults:
   spec:
-    destination:
-      name: "{{ .Values.clusterName }}"
     syncPolicy:
       syncOptions:
         - CreateNamespace=true
 apps:
   argocd-core:
-    spec:
+    spec:        
+      destination:
+        name: "{{ .Values.clusterName }}"
       sources:
       - repoURL: https://github.com/argoproj/argo-cd.git
         targetRevision: v3.4.1
