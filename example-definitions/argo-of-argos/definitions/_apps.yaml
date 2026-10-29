@@ -41,13 +41,13 @@ apps:
                           clusterName: {{ .Values.clusterName | quote }}
                           env: {{ .Values.env | quote }}
                         valueFiles:
-                          {{- $basePath := list "example-definitions" "argo-of-argos" "definitions" }}     #### Change this line if you use this example in your own repo!
+                          {{- $basePath := list "example-definitions" "argo-of-argos" "definitions" }}
                           {{- $basePathLen := len $basePath | int -}}
-                          {{- $path := concat $basePath (.Values.flavor | splitList "-") }}
-                          {{- $path = append $path .Values.env }}
+                          {{- $path := concat $basePath (.Values.flavor | splitList "-") (list .Values.env .Values.clusterName) }}
                           {{- range $i := untilStep $basePathLen (len $path) 1 }}
-                          $definitions//{{ join "/" (slice $path 0 $i) }}/_apps.yaml
+                          - $definitions/{{ join "/" (slice $path 0 $i) }}/_apps.yaml
                           {{- end }}
+                          - $definitions/{{ join "/" $path }}.yaml
               target:
                 kind: Application
                 name: serviceset
