@@ -35,19 +35,22 @@ apps:
                       path: serviceset
                       targetRevision: init-repo
                       helm:
-                        values:
+                        values: |
                           appDictKey: edgeApps
                           flavor: {{ .Values.flavor | quote }}
                           clusterName: {{ .Values.clusterName | quote }}
                           env: {{ .Values.env | quote }}
                         valueFiles:
-                          {{- $path := .Values.flavor | splitList "-" }}
-                          {{- range $i := untilStep 3 (len $path) 1 }}
-                          example-definitions/argo-of-argos/definitions/{{ join "/" (slice $path 0 $i) }}/_apps.yaml
+                          {{- $basePath := list "example-definitions" "argo-of-argos" "definitions" }}     #### Change this line if you use this example in your own repo!
+                          {{- $basePathLen := len $basePath | int -}}
+                          {{- $path := concat $basePath (.Values.flavor | splitList "-") }}
+                          {{- $path = append $path .Values.env }}
+                          {{- range $i := untilStep $basePathLen (len $path) 1 }}
+                          $definitions//{{ join "/" (slice $path 0 $i) }}/_apps.yaml
                           {{- end }}
               target:
-                kind: Service
-                name: guestbook-ui
+                kind: Application
+                name: serviceset
       syncPolicy:
         automated: {}
         syncOptions:

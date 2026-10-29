@@ -4,7 +4,7 @@ This example demonstrate the use of Argo Flavors to manage multiple clusters whe
 > It is reccomended to use argocd agent with this project to get a cleaner deployment
 
 # Environment set up
-To deploy this example you will need an argocd instance connected to two clusters. The connected clusters don't have an argocd instance initially. If don't you already have an argocd instance, this part guides you through setting up a demo using vcluster.
+To deploy this example you will need an argocd instance connected to two clusters. The connected clusters don't have an argocd instance initially. If you don't already have an argocd instance, this part guides you through setting up a demo using vcluster.
 
 ## Requirements
 - vcluster cli
