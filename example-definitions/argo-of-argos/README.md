@@ -25,13 +25,10 @@ flowchart TD
     C --> D
     C --> E
 
-    linkStyle default stroke:black
-    classDef hubcluster fill:#ddf4ff,stroke:#54aeff,color:#1f2328
-    classDef spokecluster fill:#fff8c5,stroke:#d4a72c,color:#1f2328
-    classDef apps fill:#fbefff,stroke:#bf8aff,color:#1f2328
-    classDef workload fill:#dafbe1,stroke:#4ac26b,color:#1f2328
-    class hub hubcluster
-    class spoke spokecluster
+    style hub fill:#0d2238,stroke:#58a6ff,color:#f0f6fc
+    style spoke fill:#271b38,stroke:#bc8cff,color:#f0f6fc
+    classDef apps fill:#1f6feb,stroke:#58a6ff,color:#f0f6fc
+    classDef workload fill:#238636,stroke:#3fb950,color:#f0f6fc
     class A,B,C,D,F apps
     class E workload
 ```
@@ -185,3 +182,52 @@ spec:
     targetRevision: HEAD
 EOF
 ```
+
+Open the manager argocd ui and see your app has been created:
+<p align="center">
+    <img src="../../docs/assets/argo-of-argos/apps.png">
+</p>
+
+sync the app:
+<p align="center">
+    <img src="../../docs/assets/argo-of-argos/clusterset.png">
+</p>
+
+An application has been created for each cluster. We can enter one of them and sync it too:
+
+<p align="center">
+    <img src="../../docs/assets/argo-of-argos/spoke0-apps.png">
+</p>
+
+A single app has been created, this is the app we defined under "apps" key in [_apps.yaml_](definitions/_apps.yaml). If more apps would be defined then we would have seen them here as well. If we enter the app we can see that it deploys argocd core components into the destination spoke cluster as well as an application manifest that references the [serviceset](../../serviceset/) chart:
+
+<p align="center">
+    <img src="../../docs/assets/argo-of-argos/argocd-core-spoke0.png">
+</p>
+
+If we try to enter the serviceset app we will reach a "fail to load" screen because unlike the apps so far, this one is deployed to the spoke cluster and is managed by the spoke argocd.
+
+<p align="center">
+    <img src="../../docs/assets/argo-of-argos/failed-to-load.png">
+</p>
+
+To view it we shall use the argocd cli:
+```shell
+kubectl config set-context ${SPOKE_CLUSTERS_CONTEXTS[0]} --namespace argocd
+kubectl config use-context ${SPOKE_CLUSTERS_CONTEXTS[0]}
+# login
+argocd login --core
+# set up tunnel
+argocd admin dashboard
+```
+
+Open your browser at localhost:8080 and interact with the app:
+<p align="center">
+    <img src="../../docs/assets/argo-of-argos/serviceset.png">
+</p>
+
+You can see that the deployed apps are the ones under "spokeApps" key in [_apps.yaml_](definitions/_apps.yaml) and not "apps". This is possible because we can control which key holds the apps with the parameter "appDictKey" passed to the serviceset app.
+
+<p align="center">
+    <img src="../../docs/assets/argo-of-argos/guestbook-ui.png">
+</p>
