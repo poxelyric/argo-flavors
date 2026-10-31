@@ -25,6 +25,7 @@ flowchart TD
     C --> D
     C --> E
 
+    linkStyle default stroke:black
     classDef hubcluster fill:#ddf4ff,stroke:#54aeff,color:#1f2328
     classDef spokecluster fill:#fff8c5,stroke:#d4a72c,color:#1f2328
     classDef apps fill:#fbefff,stroke:#bf8aff,color:#1f2328
@@ -57,28 +58,28 @@ MAIN_CTX=`kubectl config current-context`
 MANAGER_NAME=hub
 MANAGER_NS=vcluster-$MANAGER_NAME
 ARGOCD_VERSION=v3.4.1
-EDGE_CLUSTERS_NAMES=(spoke0 spoke1)
-EDGE_CLUSTERS_NS=()
-EDGE_CLUSTERS_CONTEXTS=()
+SPOKE_CLUSTERS_NAMES=(spoke0 spoke1)
+SPOKE_CLUSTERS_NS=()
+SPOKE_CLUSTERS_CONTEXTS=()
 ```
 
-create workload clusters:
+create workload clusters (wait patiently for vcluster):
 ```shell
-for EDGE_CLUSTER_NAME in ${EDGE_CLUSTERS_NAMES[@]}; do
-  EDGE_CLUSTER_NS=vcluster-$EDGE_CLUSTER_NAME
-  EDGE_CLUSTERS_NS+=($EDGE_CLUSTER_NS)
-  vcluster create --context $MAIN_CTX $EDGE_CLUSTER_NAME -n $EDGE_CLUSTER_NS --connect=false --upgrade \
+for SPOKE_CLUSTER_NAME in ${SPOKE_CLUSTERS_NAMES[@]}; do
+  SPOKE_CLUSTER_NS=vcluster-$SPOKE_CLUSTER_NAME
+  SPOKE_CLUSTERS_NS+=($SPOKE_CLUSTER_NS)
+  vcluster create --context $MAIN_CTX $SPOKE_CLUSTER_NAME -n $SPOKE_CLUSTER_NS --connect=false --upgrade \
     --set controlPlane.service.spec.type=ClusterIP
-  EDGE_CLUSTERS_CONTEXTS+=(`vcluster connect $EDGE_CLUSTER_NAME -s -- kubectl config current-context`)
-  vcluster connect --context $MAIN_CTX $EDGE_CLUSTER_NAME --background-proxy=false -s &
+  SPOKE_CLUSTERS_CONTEXTS+=(`vcluster connect $SPOKE_CLUSTER_NAME -s -- kubectl config current-context`)
+  vcluster connect --context $MAIN_CTX $SPOKE_CLUSTER_NAME --background-proxy=false -s &
 done
 ```
-create manager:
+create manager (wait patiently for vcluster):
 ```shell
 # Attach spoke clusters api
 params=()
-for i in ${!EDGE_CLUSTERS_NAMES[@]}; do
-    svc="${EDGE_CLUSTERS_NS[$i]}/${EDGE_CLUSTERS_NAMES[$i]}"
+for i in ${!SPOKE_CLUSTERS_NAMES[@]}; do
+    svc="${SPOKE_CLUSTERS_NS[$i]}/${SPOKE_CLUSTERS_NAMES[$i]}"
     params+=(
         "--set networking.replicateServices.fromHost[$i].from=$svc"
         "--set networking.replicateServices.fromHost[$i].to=$svc"
@@ -100,7 +101,7 @@ kubectl apply --context $MANAGER_CONTEXT -n argocd --server-side --force-conflic
 
 wait for argocd to be ready:
 ```shell
-kubectl --context $MANAGER_CONTEXT get po -n argocd
+watch kubectl --context $MANAGER_CONTEXT get po -n argocd
 ```
 
 attach spoke clusters:
@@ -110,12 +111,12 @@ kubectl config use-context $MANAGER_CONTEXT
 # login
 argocd login --core
 # attach clusters
-for i in ${!EDGE_CLUSTERS_NAMES[@]}; do
-  argocd cluster add ${EDGE_CLUSTERS_CONTEXTS[$i]} --name ${EDGE_CLUSTERS_NAMES[$i]}
+for i in ${!SPOKE_CLUSTERS_NAMES[@]}; do
+  argocd cluster add ${SPOKE_CLUSTERS_CONTEXTS[$i]} --name ${SPOKE_CLUSTERS_NAMES[$i]}
   #get secret name created in manager by argo cli
-  secret_name=`kubectl get secrets -n argocd -o jsonpath="{range .items[?(@.data.name==\"$(echo -n ${EDGE_CLUSTERS_NAMES[$i]} | base64)\")]}{.metadata.name}{\"\n\"}{end}"`
+  secret_name=`kubectl get secrets -n argocd -o jsonpath="{range .items[?(@.data.name==\"$(echo -n ${SPOKE_CLUSTERS_NAMES[$i]} | base64)\")]}{.metadata.name}{\"\n\"}{end}"`
   # Edit url so argocd can access cluster
-  kubectl patch secret $secret_name -n argocd --type='json' -p="[{\"op\": \"replace\", \"path\": \"/data/server\", \"value\": \"$(echo -n "https://${EDGE_CLUSTERS_NAMES[$i]}.${EDGE_CLUSTERS_NS[$i]}" | base64)\"}]"
+  kubectl patch secret $secret_name -n argocd --type='json' -p="[{\"op\": \"replace\", \"path\": \"/data/server\", \"value\": \"$(echo -n "https://${SPOKE_CLUSTERS_NAMES[$i]}.${SPOKE_CLUSTERS_NS[$i]}" | base64)\"}]"
 done
 ```
 
@@ -144,7 +145,7 @@ spec:
     targetRevision: HEAD
     path: guestbook
   destination:
-    name: ${EDGE_CLUSTERS_NAMES[0]}
+    name: ${SPOKE_CLUSTERS_NAMES[0]}
     namespace: guestbook
   syncPolicy:
     syncOptions:
@@ -159,7 +160,7 @@ cat << EOF | kubectl apply -f - --context $MANAGER_CONTEXT
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: clusterset-prod
+  name: clusterset-prod-argo-of-argos
   namespace: argocd
   labels:
     type: clusterset
