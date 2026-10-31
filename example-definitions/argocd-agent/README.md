@@ -1,11 +1,47 @@
+# Argocd Agent Example
+Argocd agent is recommended if you manage a high amount of clusters. Application manifests are replicated from the hub cluster to the spoke cluster and deployed by an argocd instance in the spoke cluster. Argo-Flavors can work well with it, all you have to do is set up the agent and principle components and apply a label to your apps. Only the final apps are replicated as shown in this diagram:
+```mermaid
+flowchart TD
+    subgraph hub ["Hub Cluster"]
+        A(["Clusterset"])
+        B(["Servicesets"])
+        C(["Cluster Applications"])
+        P["Principle"]
+        A --> B
+        B --> C
+        C <-.-> P
+
+    end
+
+    subgraph spoke ["Spoke Cluster"]
+        AG["Agent"]
+        AR["Arcocd Core"]
+        
+        D(["Cluster Applications"])
+        AG --> D
+        AR <-.-> D
+    end
+
+    P <-.-> AG
+
+    classDef hubcluster fill:#ddf4ff,stroke:#54aeff,color:#1f2328
+    classDef spokecluster fill:#fff8c5,stroke:#d4a72c,color:#1f2328
+    classDef apps fill:#fbefff,stroke:#bf8aff,color:#1f2328
+    classDef workload fill:#dafbe1,stroke:#4ac26b,color:#1f2328
+
+    class hub hubcluster
+    class spoke spokecluster
+    class A,B,C,D apps
+    class AR,AG,P workload
+```
+
+# Environment setup
+login to your k8s cluster. This example was deployed on microk8s but it is agnostic to the type of cluster.
 
 ## Requirements
 - vcluster cli
 - argocd-agentctl
 - kubectl
-
-## Environment setup
-login to your k8s cluster. This example was deployed on microk8s but it is agnostic to the type of cluster.
 
 ### create vclusters
 create vclusters and set up portforwarding.
@@ -242,5 +278,39 @@ spec:
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
+EOF
+```
+
+# Deploy Flavors
+This directory has some simple definitions with two agent clusters and two apps per cluster. Deploy the following manifest to test your agents and see the deployment in action:
+
+```shell
+cat << EOF | kubectl apply -f - --context $PRINCIPLE_CONTEXT
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clusterset-prod-argo-agent
+  namespace: argocd
+  labels:
+    type: clusterset
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  project: default
+  source:
+    helm:
+      parameters:
+      - name: definitionsRepo.repoURL
+        value: https://github.com/poxelyric/argo-flavors.git
+      - name: definitionsRepo.targetRevision
+        value: HEAD
+      - name: definitionsRepo.basePath
+        value: example-definitions/argocd-agent
+      - name: env
+        value: prod
+    path: clusterset
+    repoURL: https://github.com/poxelyric/argo-flavors.git
+    targetRevision: HEAD
 EOF
 ```

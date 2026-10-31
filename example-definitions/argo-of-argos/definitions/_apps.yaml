@@ -36,7 +36,7 @@ apps:
                       targetRevision: init-repo
                       helm:
                         values: |
-                          appDictKey: edgeApps
+                          appDictKey: "spokeApps"
                           flavor: {{ .Values.flavor | quote }}
                           clusterName: {{ .Values.clusterName | quote }}
                           env: {{ .Values.env | quote }}
@@ -57,7 +57,7 @@ apps:
           - ServerSideApply=true
           - CreateNamespace=true
 
-edgeApps:
+spokeApps:
   guestbook-ui:
     spec:
       destination:

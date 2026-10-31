@@ -1,4 +1,39 @@
-This example demonstrate the use of Argo Flavors to manage multiple clusters where each cluster has its own argocd instance to ease the load from the main argocd.
+# Argo of Argos
+
+This example demonstrate the use of Argo Flavors to manage multiple clusters where each cluster has its own argocd instance to ease the load from the main argocd. Instead of using argocd agent here we sync application manifests to the spoke clusters by deploying them with the main argocd
+
+```mermaid
+flowchart TD
+    subgraph hub ["Hub Cluster"]
+        A(["clusterset"])
+        B(["serviceset"])
+        C(["Cluster Application"])
+        A --> B
+        B --> C
+    end
+
+    subgraph spoke ["Spoke Cluster"]
+        E["Arcocd Core"]
+        D(["serviceset"])
+        F(["cluster applications"])
+        E <-.-> D
+
+        E <-.-> F
+        D --> F
+    end
+
+    C --> D
+    C --> E
+
+    classDef hubcluster fill:#ddf4ff,stroke:#54aeff,color:#1f2328
+    classDef spokecluster fill:#fff8c5,stroke:#d4a72c,color:#1f2328
+    classDef apps fill:#fbefff,stroke:#bf8aff,color:#1f2328
+    classDef workload fill:#dafbe1,stroke:#4ac26b,color:#1f2328
+    class hub hubcluster
+    class spoke spokecluster
+    class A,B,C,D,F apps
+    class E workload
+```
 
 > [!NOTE]
 > It is reccomended to use argocd agent with this project to get a cleaner deployment
@@ -22,7 +57,7 @@ MAIN_CTX=`kubectl config current-context`
 MANAGER_NAME=hub
 MANAGER_NS=vcluster-$MANAGER_NAME
 ARGOCD_VERSION=v3.4.1
-EDGE_CLUSTERS_NAMES=(edge0 edge1)
+EDGE_CLUSTERS_NAMES=(spoke0 spoke1)
 EDGE_CLUSTERS_NS=()
 EDGE_CLUSTERS_CONTEXTS=()
 ```
@@ -40,7 +75,7 @@ done
 ```
 create manager:
 ```shell
-# Attach edge clusters api
+# Attach spoke clusters api
 params=()
 for i in ${!EDGE_CLUSTERS_NAMES[@]}; do
     svc="${EDGE_CLUSTERS_NS[$i]}/${EDGE_CLUSTERS_NAMES[$i]}"
@@ -68,7 +103,7 @@ wait for argocd to be ready:
 kubectl --context $MANAGER_CONTEXT get po -n argocd
 ```
 
-attach edge clusters:
+attach spoke clusters:
 ```shell
 kubectl config set-context $MANAGER_CONTEXT --namespace argocd
 kubectl config use-context $MANAGER_CONTEXT
@@ -94,7 +129,7 @@ Expose the argocd-server svc however you want to or use port-forwarding:
 kubectl port-forward svc/argocd-server --context $MANAGER_CONTEXT 9999:80
 # Access at localhost:9999
 ```
-you can verify the agent by deploying an app:
+you can verify the connection by deploying an app:
 ```shell
 cat << EOF | kubectl apply -f - --context $MANAGER_CONTEXT
 apiVersion: argoproj.io/v1alpha1
@@ -117,7 +152,7 @@ spec:
 EOF
 ```
 
-### Deploy Flavors
+# Deploy Flavors
 Apply this manifest to create a clusterset in the manager:
 ```shell
 cat << EOF | kubectl apply -f - --context $MANAGER_CONTEXT
