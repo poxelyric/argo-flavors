@@ -1,7 +1,7 @@
 defaults:
   metadata:
     annotations:
-      annotation.to.show.features: "{{ .Values.clusterName }}.{{ .Values.appName }}.{{ .Values.flavor }}"
+      annotation.to.show.features: "{{ .Values.clusterName }}.{{ .appName }}.{{ .Values.flavor }}"
   spec:
     destination:
       namespace: "{{ .Values.clusterName }}"

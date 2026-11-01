@@ -5,8 +5,8 @@ defaults:
   spec:
     project: agent-default
     destination:
-      name: "{{ .Values.appName }}"
-      namespace: "{{ .Values.appName }}"
+      name: "{{ .Values.clusterName }}"
+      namespace: "{{ .appName }}"
     syncPolicy:
       syncOptions:
         - CreateNamespace=true

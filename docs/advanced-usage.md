@@ -63,7 +63,7 @@ Argo Flavors will pass your application configuration through a tpl function. Th
 - `{{ .Values.clusterName }}` - Target cluster name. The name of the cluster file: `<cluster name>.yaml`
 - `{{ .Values.flavor }}` - The flavor directories the cluster is in joined with a "-"
 - `{{ .Values.env }}` - Environment (staging, prod, etc)
-- `{{ .Values.appName }}` - Application name. This is equal to the key of the application
+- `{{ .appName }}` - Application name. This is equal to the key of the application
 
 **Example:**
 ```yaml
