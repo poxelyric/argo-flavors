@@ -46,36 +46,38 @@ login to your k8s cluster. This example was deployed on microk8s but it is agnos
 ### create vclusters
 create vclusters and set up portforwarding.
 
-create principal:
+create principal (wait patiently for vcluster):
 ```shell
+vcluster disconnect #just in case
+MAIN_CTX=`kubectl config current-context`
 PRINCIPAL_NAME=principal
 PRINCIPAL_CLUSTER_NS=vcluster-$PRINCIPAL_NAME
 AGENT_REALESE=v0.8.1
 ARGOCD_VERSION=v3.4.1
 
-vcluster create $PRINCIPAL_NAME -n $PRINCIPAL_CLUSTER_NS --connect=false --upgrade \
+vcluster create --context $MAIN_CTX $PRINCIPAL_NAME -n $PRINCIPAL_CLUSTER_NS --connect=false --upgrade \
   --set networking.replicateServices.toHost[0].from="argocd/argocd-server" \
   --set networking.replicateServices.toHost[0].to="argocd-server" \
-  --set networking.replicateServices.toHost[0].from="argocd/argocd-agent-principal" \
-  --set networking.replicateServices.toHost[0].to="argocd-agent-principal"
+  --set networking.replicateServices.toHost[1].from="argocd/argocd-agent-principal" \
+  --set networking.replicateServices.toHost[1].to="argocd-agent-principal"
 
 # set up context variable and background connection
 PRINCIPAL_CONTEXT=`vcluster connect $PRINCIPAL_NAME -s -- kubectl config current-context`
-vcluster connect $PRINCIPAL_NAME --background-proxy=false -s &
+vcluster connect --context $MAIN_CTX $PRINCIPAL_NAME --background-proxy=false -s &
 ```
-create agents:
+create agents (wait patiently for vcluster):
 ```shell
-AGENT_NAMES=(agent1 agent2)
+AGENT_NAMES=(agent0 agent1)
 AGENT_CONTEXTS=()
 for AGENT_NAME in ${AGENT_NAMES[@]}; do
   AGENT_CLUSTER_NS=vcluster-$AGENT_NAME
 
-  vcluster create $AGENT_NAME -n $AGENT_CLUSTER_NS --connect=false --upgrade \
+  vcluster create --context $MAIN_CTX $AGENT_NAME -n $AGENT_CLUSTER_NS --connect=false --upgrade \
     --set networking.replicateServices.fromHost[0].from="$PRINCIPAL_CLUSTER_NS/argocd-agent-principal" \
     --set networking.replicateServices.fromHost[0].to="argocd/argocd-agent-principal"
   
   AGENT_CONTEXTS+=(`vcluster connect $AGENT_NAME -s -- kubectl config current-context`)
-  vcluster connect $AGENT_NAME --background-proxy=false -s &
+  vcluster connect --context $MAIN_CTX $AGENT_NAME --background-proxy=false -s &
 done
 ```
 
@@ -130,6 +132,8 @@ kind: AppProject
 metadata:
   name: agent-default
   namespace: argocd
+  labels:
+    edge: "true"
 spec:
   clusterResourceWhitelist:
   - group: '*'
@@ -253,7 +257,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 ```
 Expose the argocd-server svc however you want to or use port-forwarding:
 ```shell
-kubectl port-forward svc/argocd-server -n $PRINCIPAL_CLUSTER_NS 9999:80
+kubectl port-forward svc/argocd-server --context $MAIN_CTX -n $PRINCIPAL_CLUSTER_NS 9999:80
 # Access at localhost:9999
 ```
 you can verify the agent by deploying an app to the principal:
@@ -285,7 +289,7 @@ EOF
 This directory has some simple definitions with two agent clusters and two apps per cluster. Deploy the following manifest to test your agents and see the deployment in action:
 
 ```shell
-cat << EOF | kubectl apply -f - --context $PRINCIPLE_CONTEXT
+cat << EOF | kubectl apply -f - --context $PRINCIPAL_CONTEXT
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

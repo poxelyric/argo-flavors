@@ -6,6 +6,7 @@ defaults:
     project: agent-default
     destination:
       name: "{{ .Values.appName }}"
+      namespace: "{{ .Values.appName }}"
     syncPolicy:
       syncOptions:
         - CreateNamespace=true

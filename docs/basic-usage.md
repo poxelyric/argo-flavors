@@ -47,7 +47,7 @@ defaults:
     destination:
       name: "{{ .Values.clusterName }}"
       #alternativly:
-      #server: https://api."{{ .Values.clusterName }}".my.domain 
+      #server: "https://api.{{ .Values.clusterName }}.my.domain"
 ```
 
 
@@ -89,5 +89,5 @@ spec:
 sync the app and sync the created applications if not set to auto sync.
 
 # Next steps
-check out [features](features.md) doc for explanation of different features
-check out [advanced usage](advanced-usage.md) doc for explanation of different features
+check out [architecture](architecture.md) doc for an explanation of how flavors is built
+check out [advanced usage](advanced-usage.md) doc to explore different features

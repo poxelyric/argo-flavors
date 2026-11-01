@@ -1,8 +1,6 @@
 apps:
   podinfo-helm:
     spec:
-      destination:
-        namespace: earth
       source:
         helm:
           valuesObject:
