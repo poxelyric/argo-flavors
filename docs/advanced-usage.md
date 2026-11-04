@@ -49,7 +49,7 @@ apps:
 
 ## 🌍 Cluster-Specific Overrides
 
-The cluster file itself also serves as a configuration file, allowing you ti apply final, cluster-specific modifications that take precedence over all other configurations.
+The cluster file itself also serves as a configuration file, allowing you to apply final, cluster-specific modifications that take precedence over all other configurations.
 
 **Use Cases:**
 - Cluster-specific configration accross all application

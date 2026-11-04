@@ -73,4 +73,4 @@ EOF
 ```
 See [README](example-definitions/avatar/README.md) for a walkthrough.
 
-Check out the other [examples](docs/examples.md) to see how you can adapt this project to different architectures
+Check out the [examples](/example-definitions/) to see a showcase of features and how you can adapt this project to different architectures.
