@@ -1,4 +1,5 @@
 # Usage
+With argo flavors you define your app specifications in a directry tree strored in git. You can look at these [examples](../example-definitions/) for a reference, specifically the avatar example focuses on the definitions. This guide walks you through creating your definitions repo and deploying clusterset.
 
 ## Definitions repo
 Start by creating a git repository to store your app configurations. The directory structure must conform to the following rules:
@@ -30,7 +31,7 @@ my-definitions/                   # Base path
             └── cluster2.yaml
 ```
 ### Configuration Files Structure
-Both `_apps.yaml` and `<cluster-name>.yaml` files have the same structure and are used as values for the final app generation. Special fields must obey a certain structure, specifically the fields specified in the serviceset values. Other than that you may specify arbitrary fields to be used for advanced app templating.
+Both `_apps.yaml` and `<cluster-name>.yaml` files have the same structure and are used as values for the final app generation. Special fields must obey a certain structure, specifically the fields specified in the [serviceset values](../serviceset/values.yaml). Other than that you may specify arbitrary fields to be used for advanced app templating.
 |value                              |functionality       |
 |---                                |---                 |
 |`apps`                             | a dictionary specifying applications configuration. Each key in the dict can be named in any way and will be used for templating the application name. The values of these keys must be in the structure of an argocd application definition (possibly partial)|
@@ -55,8 +56,9 @@ defaults:
 When deploying the clusterset there are special values you need to set in order to control the application deployment:
 |value                              |functionality       |
 |---                                |---    |
-|`definitionsRepo.targetRevision`   |This configures the url for the git repo that stores your definitions|
-|`definitionsRepo.basePath`         |Your repo might contain multiple definitions or un related directories. This configures the basePath your definitions are stored|
+|`definitionsRepo.repoURL`          |This configures the url for the git repo that stores your definitions| 
+|`definitionsRepo.targetRevision`   |Configures targetRevision of definitions|
+|`definitionsRepo.basePath`         |Your repo might contain multiple definitions or unrelated directories. This configures the basePath your definitions are stored|
 |`env`                              |argo flavors will only deploy clusters that reside under a directory named like the env value. This creates seperation between workloads of different envs|
 
 To use the project you must start by creating a clusterset application:

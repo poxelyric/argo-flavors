@@ -34,12 +34,12 @@ This project is ideal for teams using Argo CD to manage tens or hundreds of clus
 
 ## 📚 Documentation
 
-Complete documentation is available in the [docs/](docs/) directory:
+Documentation is available in the [docs/](docs/) directory:
 
 - **[Architecture](docs/architecture.md)** - How Argo Flavors works
-- **[Features](docs/features.md)** - Complete feature overview
-- **[Advanced Guide](docs/advanced-guide.md)** - Complex configurations
-- **[Examples](docs/examples.md)** - Learn from included examples
+- **[Basic Usage](docs/basic-usage.md)** - A quickstart guide
+- **[Advanced Guide](docs/advanced-guide.md)** - Explore features and complex usage of flavors
+- **[Examples](example-definitions)** - Learn from included examples and see how flavors is used in different architectures
 
 ## 🚀 Quick Start
 

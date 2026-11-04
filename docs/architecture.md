@@ -66,7 +66,14 @@ This pattern finds cluster files under the `staging` environment folder and allo
 
 For each discovered cluster file, an ArgoCD Application is created. The application is a multisource app that sources:
 - **serviceset** - the helm chart
-- **definitionrepo** - _apps.yaml files are used as values for the serviceset
+- **definitionrepo** - _apps.yaml files are used as values for the serviceset as well as the cluster file.
+
+The _apps.yaml files that are created are the files along the path of the selected cluster. And so for example a cluster in the following path: `example-definitions/flavor1/staging/cluster1.yaml` will have these value files:
+
+- example-definitions/_apps.yaml
+- example-definitions/flavor1/_apps.yaml
+- example-definitions/flavor1/staging/_apps.yaml
+- example-definitions/flavor1/staging/cluster1.yaml
 
 ### 3. Configuration Merging
 
@@ -78,7 +85,7 @@ apps:
   myapp:
     spec:
       source:
-        repoURL: https://github.com/myorg/myapp
+        repoURL: https://github.com/myorg/myapp.git
         path: chart
 
 #  example-definitions/flavor1/_apps.yaml
@@ -95,16 +102,33 @@ apps:
       source:
         targetRevision: dev  # Override version for this flavor
 
+# example-definitions/flavor1/staging/cluster1.yaml
+apps:
+  uniqApp: # Add a uniqe app for this specific cluster
+    spec:
+      source:
+        repoURL: https://github.com/myorg/uniqApp.git
+        path: chart
+
 # Final result: merged configuration with flavor override applied
 
 apps:
   myapp:
     spec:
       source:
-        repoURL: https://github.com/myorg/myapp
+        repoURL: https://github.com/myorg/myapp.git
         path: chart
         targetRevision: dev
+  uniqApp:
+    spec:
+      source:
+        repoURL: https://github.com/myorg/uniqApp.git
+        path: chart
 ```
+
+### 4. Create apps
+The serviceset creates the apps based on the resulting merged configuration. 
+
 
 ## Key Benefits
 
