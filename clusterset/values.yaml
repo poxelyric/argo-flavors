@@ -7,14 +7,14 @@ applicationset: {}
 definitionsRepo:
   repoURL: https://github.com/poxelyric/argo-flavors.git
   targetRevision: HEAD
-  basePath: example-definitions/myargo
+  basePath: example-definitions/avatar
 
 servicesetSource:
-  repoURL: https://github.com/poxelyric/argo-flavors.git
-  targetRevision: HEAD
-  path: serviceset
+  repoURL: ghcr.io/poxelyric
+  targetRevision: 1.0.0
+  chart: serviceset
 
-syncPolicy:
+servicesetSyncPolicy:
   # automated: true
 
 appsFile:

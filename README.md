@@ -66,9 +66,9 @@ spec:
         value: HEAD
       - name: definitionsRepo.basePath
         value: example-definitions/avatar
-    path: clusterset
-    repoURL: https://github.com/poxelyric/argo-flavors.git
-    targetRevision: HEAD
+    chart: clusterset
+    repoURL: ghcr.io/poxelyric
+    targetRevision: 1.0.0
 EOF
 ```
 See [README](example-definitions/avatar/README.md) for a walkthrough.

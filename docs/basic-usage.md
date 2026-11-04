@@ -79,9 +79,9 @@ spec:
         value: <ref of definitions repo> # recommended to use HEAD
       - name: definitionsRepo.basePath
         value: <path to directory of definitons>
-    path: clusterset
-    repoURL: https://github.com/poxelyric/argo-flavors.git
-    targetRevision: HEAD
+    chart: clusterset
+    repoURL: ghcr.io/poxelyric
+    targetRevision: 1.0.0
 ```
 > [!WARNING]
 > Make sure argocd can access your definition repos

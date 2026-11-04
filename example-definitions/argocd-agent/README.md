@@ -24,13 +24,10 @@ flowchart TD
 
     P <-.-> AG
 
-    classDef hubcluster fill:#ddf4ff,stroke:#54aeff,color:#1f2328
-    classDef spokecluster fill:#fff8c5,stroke:#d4a72c,color:#1f2328
-    classDef apps fill:#fbefff,stroke:#bf8aff,color:#1f2328
-    classDef workload fill:#dafbe1,stroke:#4ac26b,color:#1f2328
-
-    class hub hubcluster
-    class spoke spokecluster
+    style hub fill:#0d2238,stroke:#58a6ff,color:#f0f6fc
+    style spoke fill:#271b38,stroke:#bc8cff,color:#f0f6fc
+    classDef apps fill:#1f6feb,stroke:#58a6ff,color:#f0f6fc
+    classDef workload fill:#238636,stroke:#3fb950,color:#f0f6fc
     class A,B,C,D apps
     class AR,AG,P workload
 ```
@@ -212,7 +209,7 @@ done
 
 create agent manifests:
 ```shell
-for AGENT_CONTEXT in $AGENT_CONTEXTS; do
+for AGENT_CONTEXT in ${AGENT_CONTEXTS[@]}; do
 kubectl apply -n argocd \
   -k "https://github.com/argoproj-labs/argocd-agent/install/kubernetes/agent?ref=$AGENT_REALESE" \
   --context $AGENT_CONTEXT
@@ -313,8 +310,8 @@ spec:
         value: example-definitions/argocd-agent
       - name: env
         value: prod
-    path: clusterset
-    repoURL: https://github.com/poxelyric/argo-flavors.git
-    targetRevision: HEAD
+    chart: clusterset
+    repoURL: ghcr.io/poxelyric
+    targetRevision: 1.0.0
 EOF
 ```

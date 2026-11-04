@@ -36,9 +36,9 @@ spec:
         value: HEAD
       - name: definitionsRepo.basePath
         value: example-definitions/avatar
-    path: clusterset
-    repoURL: "https://github.com/poxelyric/argo-flavors.git"
-    targetRevision: HEAD
+    chart: clusterset
+    repoURL: ghcr.io/poxelyric
+    targetRevision: 1.0.0
 EOF
 ```
 
@@ -86,9 +86,9 @@ spec:
         value: example-definitions/avatar
       - name: env
         value: prod
-    path: clusterset
-    repoURL: "https://github.com/poxelyric/argo-flavors.git"
-    targetRevision: HEAD
+    chart: clusterset
+    repoURL: ghcr.io/poxelyric
+    targetRevision: 1.0.0
 EOF
 ```
 You can see that only azula and iroh were deployed. This is because they are the only clusters under a directory named prod.

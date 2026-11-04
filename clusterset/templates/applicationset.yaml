@@ -23,15 +23,13 @@ spec:
       project: {{ .Values.applicationset.project | default "default" }}
   templatePatch: |-
     syncPolicy:
-      {{- toYaml .Values.syncPolicy | nindent 6 }}
+      {{- toYaml .Values.servicesetSyncPolicy | nindent 6 }}
     spec:
       sources:
         - repoURL: {{ .Values.definitionsRepo.repoURL | quote }}
           targetRevision: {{ .Values.definitionsRepo.targetRevision | quote }}
           ref: definitions
-        - repoURL: {{ .Values.servicesetSource.repoURL | quote }}
-          targetRevision: {{ .Values.servicesetSource.targetRevision | quote }}
-          path: {{ .Values.servicesetSource.path }}
+        - {{ .Values.servicesetSource | toYaml | indent 10 | trim }}
           helm:
             values: |-
               {{- include "clusterset.values" . | indent 14 }}

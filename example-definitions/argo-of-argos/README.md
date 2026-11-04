@@ -177,9 +177,9 @@ spec:
         value: example-definitions/argo-of-argos/definitions
       - name: env
         value: prod
-    path: clusterset
-    repoURL: https://github.com/poxelyric/argo-flavors.git
-    targetRevision: HEAD
+    chart: clusterset
+    repoURL: ghcr.io/poxelyric
+    targetRevision: 1.0.0
 EOF
 ```
 
