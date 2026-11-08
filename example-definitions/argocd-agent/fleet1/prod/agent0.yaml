@@ -1,0 +1,4 @@
+overrides:
+  spec:
+    syncPolicy:
+      automated: null

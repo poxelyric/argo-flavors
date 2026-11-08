@@ -1,0 +1,13 @@
+defaults:
+  metadata:
+    annotations:
+      pole.location: "north-pole"
+apps:
+  podinfo-helm:
+    spec:
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Water Tribe serenity and healing"
+              logo: "https://placehold.co/250x250/1E90FF/ffffff?text=Water+Tribe"

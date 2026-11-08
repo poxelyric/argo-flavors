@@ -1,0 +1,24 @@
+# Default values for clusterset chart
+applicationset: {}
+  # name: clusters-applicationset
+  # namespaceOverride: argocd
+  # project: default
+
+definitionsRepo:
+  repoURL: https://github.com/poxelyric/argo-flavors.git
+  targetRevision: HEAD
+  basePath: example-definitions/avatar
+
+servicesetSource:
+  repoURL: ghcr.io/poxelyric
+  targetRevision: 1.0.0
+  chart: serviceset
+
+servicesetSyncPolicy:
+  # automated: true
+
+appsFile:
+  prefix: "_"
+  name: apps.yaml
+appSuffix: -apps
+env: staging

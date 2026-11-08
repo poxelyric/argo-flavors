@@ -1,0 +1,76 @@
+defaults:
+  spec:
+    syncPolicy:
+      syncOptions:
+        - CreateNamespace=true
+apps:
+  argocd-core:
+    spec:        
+      destination:
+        server: null
+        name: "{{ .Values.clusterName }}"
+        namespace: argocd
+      sources:
+      - repoURL: https://github.com/argoproj/argo-cd.git
+        targetRevision: v3.4.1
+        path: manifests/core-install
+        kustomize:
+          namespace: argocd
+      - repoURL: https://github.com/poxelyric/argo-flavors.git
+        targetRevision: init-repo
+        ref: definitions
+      - repoURL: https://github.com/poxelyric/argo-flavors.git
+        targetRevision: init-repo
+        path: example-definitions/argo-of-argos/mediator-app
+        kustomize:
+          patches:
+            - patch: |-
+                - op: replace
+                  path: /spec/sources
+                  value:
+                    - ref: definitions
+                      repoURL: https://github.com/poxelyric/argo-flavors.git
+                      targetRevision: init-repo
+                    - repoURL: https://github.com/poxelyric/argo-flavors.git
+                      path: serviceset
+                      targetRevision: init-repo
+                      helm:
+                        values: |
+                          appDictKey: "spokeApps"
+                          flavor: {{ .Values.flavor | quote }}
+                          clusterName: {{ .Values.clusterName | quote }}
+                          env: {{ .Values.env | quote }}
+                        valueFiles:
+                          {{- $basePath := list "example-definitions" "argo-of-argos" "definitions" }}
+                          {{- $basePathLen := len $basePath | int -}}
+                          {{- $path := concat $basePath (.Values.flavor | splitList "-") (list .Values.env .Values.clusterName) }}
+                          {{- range $i := untilStep $basePathLen (len $path) 1 }}
+                          - $definitions/{{ join "/" (slice $path 0 $i) }}/_apps.yaml
+                          {{- end }}
+                          - $definitions/{{ join "/" $path }}.yaml
+              target:
+                kind: Application
+                name: serviceset
+      syncPolicy:
+        automated: {}
+        syncOptions:
+          - ServerSideApply=true
+          - CreateNamespace=true
+
+spokeApps:
+  guestbook-ui:
+    spec:
+      destination:
+        namespace: guestbook-ui
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps.git
+        targetRevision: HEAD
+        path: guestbook
+  podinfo:
+    spec:
+      destination:
+        namespace: podinfo
+      source:
+        repoURL: https://stefanprodan.github.io/podinfo
+        chart: podinfo
+        targetRevision: 6.1.5

@@ -1,0 +1,9 @@
+apps:
+  podinfo-helm:
+    spec:
+      source:
+        helm:
+          valuesObject:
+            replicaCount: 2
+            ui:
+              message: "Lightning bending strikes with precision"

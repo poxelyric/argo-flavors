@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ .Values.applicationset.name | default .Release.Name }}
+  namespace: {{ include "clusterset.namespace" . }}
+spec:
+  goTemplate: true
+  generators:
+  - git:
+      repoURL: {{ .Values.definitionsRepo.repoURL | quote }}
+      revision: {{ .Values.definitionsRepo.targetRevision | quote }}
+      files:
+      - path: "{{ .Values.definitionsRepo.basePath }}/**/{{ .Values.env }}/[^{{ .Values.appsFile.prefix }}]*.yaml"
+  template:
+    metadata:
+      name: '{{ include "clusterset.clusterName" . }}{{ .Values.appSuffix }}'
+      labels:
+        type: serviceset
+        env: {{ .Values.env | quote }}
+    spec:
+      destination:
+        server: https://kubernetes.default.svc
+      project: {{ .Values.applicationset.project | default "default" }}
+  templatePatch: |-
+    syncPolicy:
+      {{- toYaml .Values.servicesetSyncPolicy | nindent 6 }}
+    spec:
+      sources:
+        - repoURL: {{ .Values.definitionsRepo.repoURL | quote }}
+          targetRevision: {{ .Values.definitionsRepo.targetRevision | quote }}
+          ref: definitions
+        - {{ .Values.servicesetSource | toYaml | indent 10 | trim }}
+          helm:
+            values: |-
+              {{- include "clusterset.values" . | indent 14 }}
+            valueFiles:
+              {{- include "clusterset.valueFiles" . | indent 14 }}

@@ -1,0 +1,20 @@
+{{- $apps := merge dict (get .Values .Values.appDictKey) -}} 
+{{- $context := deepCopy . -}}
+
+{{- range $appName, $appSpec := $apps }}
+
+{{- $_ := set $context "appName" $appName }}{{/* set the appName in the context for templating */}}
+
+{{- $defaultApp := tpl (toYaml $.Values.defaults) $context | fromYaml }} {{/* template the default app with the context */}}
+{{- $overrides := tpl (toYaml $.Values.overrides) $context | fromYaml }} {{/* template the overrides with the context */}}
+{{- $patches := tpl (toYaml $appSpec) $context | fromYaml }}                   {{/* template the patch app with the context */}}
+
+{{- include "serviceset.modifyApp" (list $defaultApp $patches $.Values.mutuallyExclusiveFields) }} {{/* modify the default app according to the patch and the mutually exclusive fields */}}
+{{- include "serviceset.modifyApp" (list $overrides $patches $.Values.mutuallyExclusiveFields) }} {{/* modify the overrides according to the patch and the mutually exclusive fields */}}
+
+---
+{{- $finalApp := mergeOverwrite $defaultApp $patches }} {{/* merge the modified default app with the patch app to get the final app spec */}}
+{{- $finalApp = mergeOverwrite $finalApp $overrides }} {{/* merge the final app spec with the overrides to get the final app spec with overrides */}}
+{{- toYaml $finalApp }} {{/* output the final app spec as yaml */}}
+
+{{- end }}

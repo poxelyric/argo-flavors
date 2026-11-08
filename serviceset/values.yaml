@@ -1,0 +1,77 @@
+defaults:
+  apiVersion: argoproj.io/v1alpha1
+  kind: Application
+  metadata:
+    name: "{{ .appName }}-{{ .Values.clusterName }}"
+    namespace: argocd
+    labels:
+      clusterName: "{{ .Values.clusterName }}"
+      flavor: "{{ .Values.flavor }}"
+      env: "{{ .Values.env }}"
+      type: service
+  spec:
+    destination:
+      server: https://kubernetes.default.svc
+    project: default
+    # source:
+    #   repoURL: https://github.com/example/services-repo
+    #   helm:
+    #     valueFiles:
+    #       - values.yaml
+    #   kustomize:
+    #     patchesStrategicMerge:
+    #       - patch.yaml
+
+overrides:
+  # spec:
+  #   syncPolicy: null
+
+appDictKey: apps
+
+mutuallyExclusiveFields: [
+  [
+  spec.sources,
+  spec.source
+  ],
+  [
+  spec.source.kustomize,
+  spec.source.directory,
+  spec.source.plugin,
+  spec.source.helm
+  ]
+]
+
+# default clusterName for testing purposes
+clusterName: myCluster
+
+
+# Uncomment to test repo localy
+apps:
+  # service1:
+  #   spec:
+  #     source:
+  #       path: service1
+  #     destination:
+  #       namespace: service1
+  #     syncPolicy:
+  #       automated:
+  #         prune: true
+  #         selfHeal: true
+  # service2:
+  #   spec:
+  #     source:
+  #       path: service2
+  #       kustomize:
+  #         namePrefix: "{{ .Values.clusterName }}"
+  #     destination:
+  #       namespace: service2
+  # service3:
+  #   metadata:
+  #     labels:
+  #       app: service3
+  #   spec:
+  #     sources:
+  #       - path: service3
+  #         repoURL: https://github.com/example/services-repo
+  #     destination:
+  #       namespace: service3

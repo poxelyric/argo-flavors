@@ -1,0 +1,10 @@
+apps:
+  podinfo-helm:
+    spec:
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Fire Nation ambition ignites this page"
+              logo: "https://placehold.co/250x250/FF4500/ffffff?text=Fire+Nation"
+  podinfo-git: null

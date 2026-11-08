@@ -1,0 +1,8 @@
+apps:
+  podinfo-helm:
+    spec:
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Zuko, banished prince turned hero"

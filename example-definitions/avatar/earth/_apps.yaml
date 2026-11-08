@@ -1,0 +1,9 @@
+apps:
+  podinfo-helm:
+    spec:
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: "Earth Kingdom visitors page"
+              logo: "https://placehold.co/250x250/228B22/ffffff?text=Earth+Kingdom"

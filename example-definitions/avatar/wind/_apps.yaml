@@ -1,0 +1,9 @@
+apps:
+  podinfo-helm:
+    spec:
+      source:
+        helm:
+          valuesObject:
+            ui:
+              message: '"Air is the element of freedom. The Air Nomads detached themselves from worldly concerns, and they found peace and freedom."— Uncle Iroh'
+              logo: "https://placehold.co/250x250/87CEFA/000000?text=Air+Nomads"

@@ -1,0 +1,47 @@
+defaults:
+  metadata:
+    annotations:
+      annotation.to.show.features: "{{ .Values.clusterName }}.{{ .appName }}.{{ .Values.flavor }}"
+  spec:
+    destination:
+      namespace: "{{ .Values.clusterName }}"
+    syncPolicy:
+      syncOptions:
+        - CreateNamespace=true
+apps:
+  # Base podinfo application visible to all flavors.
+  podinfo-helm:
+    spec:
+      source:
+        repoURL: https://stefanprodan.github.io/podinfo
+        chart: podinfo
+        targetRevision: 6.1.5
+        helm:
+          valuesObject:
+            replicaCount: 1
+            ui:
+              message: "{{ .Values.clusterName }}'s page"
+
+  # Example of a chart loaded from a git repository path.
+  podinfo-git:
+    spec:
+      source:
+        repoURL: https://github.com/stefanprodan/podinfo.git
+        path: charts/podinfo
+        targetRevision: HEAD
+        helm:
+          valuesObject:
+            replicaCount: 1
+            ui:
+              message: "Podinfo from Git, shared by all clusters"
+
+  # Example of multiple source entries on a single app.
+  podinfo-multi-source:
+    spec:
+      sources:
+        - repoURL: https://stefanprodan.github.io/podinfo
+          chart: podinfo
+          targetRevision: 6.1.5
+        - repoURL: https://github.com/argoproj/argocd-example-apps.git
+          targetRevision: HEAD
+          path: guestbook
